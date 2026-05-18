@@ -26,9 +26,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -61,7 +59,8 @@
               "buildTarget": "ui-nodes:build:production"
             },
             "development": {
-              "buildTarget": "ui-nodes:build:development"
+              "buildTarget": "ui-nodes:build:development",
+              "port": 5110
             }
           },
           "defaultConfiguration": "development"
@@ -80,9 +79,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           }
         }
       }
