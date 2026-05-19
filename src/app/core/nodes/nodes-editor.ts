@@ -49,6 +49,8 @@ export type NodesEditorParams = {
     }
   >;
 };
+
+// todo: flush current state when opening new file
 // todo: add more typization for T?
 export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams> {
   private readonly nodes = new ReactiveSet<UINode>();
