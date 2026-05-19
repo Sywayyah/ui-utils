@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
-import { ReactiveBase } from './reactive-base';
 import { assertValue } from '../utils/general';
+import { ReactiveBase } from './reactive-base';
 
 export class ReactiveMap<K, V> extends ReactiveBase<Map<K, V>> {
   constructor(initVal = new Map()) {
@@ -32,8 +32,8 @@ export class ReactiveMap<K, V> extends ReactiveBase<Map<K, V>> {
     return assertValue(this.getValue().get(key));
   }
 
-  getOr<R = undefined>(key: K, or = undefined as R): V | R {
-    return (this.getValue().get(key) as V | undefined) ?? or;
+  getOr(key: K): V | undefined {
+    return this.getValue().get(key) as V | undefined;
   }
 
   getEntries(): [K, V][] {
@@ -71,8 +71,8 @@ export class ObjectTypedMap<T extends object> {
     ) as T[K];
   }
 
-  getOr<K extends keyof T, R = undefined>(key: K, or = undefined as R): T[K] | R {
-    return (this.map.get(key) as T[K] | undefined) ?? or;
+  getOr<K extends keyof T>(key: K): T[K] | undefined {
+    return this.map.get(key) as T[K] | undefined;
   }
 
   clone(): ObjectTypedMap<T> {

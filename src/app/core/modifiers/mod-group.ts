@@ -24,6 +24,7 @@ export class ModGroup<T extends Partial<ModsObject>> {
   // and later infered using some key as identity
   private readonly mods = new ReactiveList<T>();
 
+  private readonly modsByKeysMap = new ReactiveMap<unknown, ReactiveList<T>>();
   private readonly namedParentModGroupsMap = new ReactiveMap<string, ModGroup<T>>();
   // sets? add checks if present/absent ?
   private readonly parentModGroups = new ReactiveSet<ModGroup<T>>();
@@ -57,7 +58,9 @@ export class ModGroup<T extends Partial<ModsObject>> {
   }
 
   getNumericModValue<
-    const K extends { [Key in keyof Required<T>]: Required<T>[Key] extends number ? Key : never }[keyof T],
+    const K extends {
+      [Key in keyof Required<T>]: Required<T>[Key] extends number ? Key : never;
+    }[keyof T],
   >(modName: K): T[K] | undefined {
     return this.combinedValues.getValue()[modName];
   }
@@ -68,10 +71,20 @@ export class ModGroup<T extends Partial<ModsObject>> {
     this.childModGroups.getItems().forEach((group) => group.processAddedMods(mods));
   }
 
+  addModsForKey(key: unknown, mods: T): void {
+    this.addMods(mods);
+    this.modsByKeysMap.updateEntry(key, (list) => list?.push(mods) ?? new ReactiveList([mods]));
+  }
+
   removeMods(mods: T): void {
     this.mods.remove(mods);
     this.processRemovedMods(mods);
     this.childModGroups.getItems().forEach((group) => group.processRemovedMods(mods));
+  }
+
+  removeModsForKey(key: unknown , mods:T): void{
+    this.removeMods(mods);
+    this.modsByKeysMap.getOr(key)?.remove(mods);
   }
 
   addParentGroup(group: ModGroup<T>): void {
