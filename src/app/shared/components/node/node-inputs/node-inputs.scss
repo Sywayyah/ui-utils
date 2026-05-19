@@ -1,0 +1,25 @@
+.input {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.prop-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  &:not(.enabled) {
+    opacity: 0.6;
+  }
+
+  button {
+    flex-shrink: 0;
+  }
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  align-self: center;
+}

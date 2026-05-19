@@ -1,0 +1,79 @@
+@let disabledFields = node().listenDisabledInputsNames() | async;
+
+@if (disabledFields?.length) {
+  <app-dropdown (selectedItemChange)="node().setInputEnabled($event, true)">
+    <div class="empty-trigger">Add Property ({{ disabledFields?.length }})</div>
+    <div class="trigger">Add Property ({{ disabledFields?.length }})</div>
+
+    @for (item of disabledFields; track $index) {
+      <app-dropdown-option [value]="item">
+        <app-mini-ui [miniUi]="node().getInputByName(item).inputConfig.uiParts()" />
+      </app-dropdown-option>
+    }
+  </app-dropdown>
+}
+<!-- todo: split in two? first all required inputs, then all optional? -->
+
+<!-- todo: use display table to show inputs? -->
+<div class="inputs">
+  @for (input of inputs(); track $index) {
+    @let isMulti = input.inputConfig.multi;
+    @let canDisable = input.inputConfig.canDisable;
+    @let isOptional = input.inputConfig.optional;
+
+    <div class="input">
+      <app-mini-ui [miniUi]="input.inputConfig.uiParts()" />
+
+      @if (isOptional) {
+        <button>
+          <app-icon (click)="node().setInputEnabled(input.inputName, false)">delete</app-icon>
+        </button>
+      }
+
+      <div>
+        @if (isMulti) {
+          <button (click)="addInputValue(input.inputName)">Add value</button>
+        }
+        <div
+          cdkDropList
+          (cdkDropListDropped)="
+            node().moveInputValue(input.inputName, $event.previousIndex, $event.currentIndex)
+          "
+        >
+          @for (context of input.list.value$ | async; track context.id) {
+            <div
+              cdkDrag
+              [cdkDragDisabled]="!isMulti"
+              class="prop-row"
+              [class.enabled]="context.enabled.value$ | async"
+            >
+              @if (isMulti) {
+                <button cdkDragHandle><app-icon>drag_handle</app-icon></button>
+                <button (click)="node().deleteInputValueByIndex(input.inputName, $index)">
+                  <app-icon>delete</app-icon>
+                </button>
+                @if (canDisable) {
+                  <input type="checkbox" [appValueBind]="context.enabled" />
+                }
+                <!-- todo: clone? -->
+              }
+              @let component = inputsService.getComponentForConfig(context)!;
+              <ng-container
+                *ngComponentOutlet="
+                  component;
+                  injector: injector;
+                  inputs: {
+                    node: node(),
+                    editor: editor(),
+                    context: context,
+                    inputParams: context.inputConfig.config.params,
+                  }
+                "
+              />
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

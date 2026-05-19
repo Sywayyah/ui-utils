@@ -1,0 +1,11 @@
+@for (elem of elems(); track $index) {
+  <ng-container
+    *ngComponentOutlet="
+      miniUiService.getComponentForElem(elem);
+      inputs: {
+        elem: elem,
+      };
+      injector: injector
+    "
+  />
+}

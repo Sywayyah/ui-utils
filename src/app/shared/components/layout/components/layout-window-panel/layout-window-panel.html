@@ -1,0 +1,23 @@
+<app-resize-handler horSide="top" />
+<app-resize-handler horSide="bottom" />
+<app-resize-handler vertSide="left" type="vertical" />
+<app-resize-handler vertSide="right" type="vertical" />
+
+<app-resize-handler horSide="top" vertSide="left" type="corner" />
+<app-resize-handler horSide="top" vertSide="right" type="corner" />
+<app-resize-handler horSide="bottom" vertSide="left" type="corner" />
+<app-resize-handler horSide="bottom" vertSide="right" type="corner" />
+
+<div class="panel">
+  <div class="header" #header>
+    <div class="header-label">
+      <ng-content select=".header" />
+    </div>
+
+    <app-icon>close</app-icon>
+  </div>
+
+  <div class="content">
+    <ng-content />
+  </div>
+</div>

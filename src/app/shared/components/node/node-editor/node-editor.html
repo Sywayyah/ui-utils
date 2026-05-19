@@ -1,0 +1,86 @@
+<div class="upper-tray" cdkMenuBar>
+  <button cdkMenuItem [cdkMenuTriggerFor]="fileMenu">File</button>
+  <button cdkMenuItem [cdkMenuTriggerFor]="utilsMenu">Utils</button>
+</div>
+
+<ng-template #fileMenu>
+  <div class="menu" cdkMenu>
+    <button (click)="save()" cdkMenuItem>
+      <app-icon>save</app-icon>
+      Save
+    </button>
+
+    <button (click)="load()" cdkMenuItem>
+      <app-icon>open_in_browser</app-icon>
+      Load
+    </button>
+
+    <hr />
+
+    <button cdkMenuItem>
+      <app-icon>settings</app-icon>
+      Settings
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #utilsMenu>
+  <div class="menu" cdkMenu>
+    <button (click)="log()" cdkMenuItem>
+      <app-icon>preview</app-icon>
+      Log Nodes
+    </button>
+  </div>
+</ng-template>
+
+@let selectedNodes = editor().selectedNodesSet.value$ | async;
+
+@let root = activeNodeRoot();
+@let rootNodes = root?.nodes?.value$ | async;
+
+<div class="tray">
+  <ng-content select=".tray" />
+
+  @if (selectedNodes!.size <= 1) {
+    @for (config of root?.nodeConfigs; track $index) {
+      <button (click)="addChildNode(root, config)">
+        <app-icon>add</app-icon>{{ config.name }}
+      </button>
+    }
+  }
+
+  @if (selectedNodes?.size) {
+    <button (click)="deleteSelectedNodes()"><app-icon>delete</app-icon>Delete</button>
+    <button (click)="moveSelectedNode('up')"><app-icon>move_up</app-icon></button>
+    <button (click)="moveSelectedNode('down')"><app-icon>move_down</app-icon></button>
+  }
+</div>
+
+<div class="roots">
+  @for (root of editor().nodeRoots.listenValues() | async; track root.rootName) {
+    <button [class.active]="root === activeNodeRoot()" (click)="setActiveRoot(root)">
+      {{ root.title }}
+    </button>
+  }
+</div>
+
+<app-layout-panels>
+  <div class="tree" *appPanel="'tree'; minWidth: 200">
+    <div>Nodes:</div>
+
+    @for (node of rootNodes; track node.id) {
+      <app-node-editor-tree-item [node]="node" [editor]="editor()" />
+    }
+  </div>
+  <div class="tree" *appPanel="'nodeViewer'; minWidth: 200; filler: true">
+    @if (root) {
+      @for (node of selectedNodes; track node.id) {
+        <app-node [node]="node" [editor]="editor()" />
+      } @empty {
+        No nodes selected
+      }
+    } @else {
+      Select Root
+    }
+  </div>
+</app-layout-panels>

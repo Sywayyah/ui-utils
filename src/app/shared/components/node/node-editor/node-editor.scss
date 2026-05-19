@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+}
+
+.menu {
+  display: inline-flex;
+  flex-direction: column;
+  background: #6d6d6d;
+  padding: 5px;
+
+  hr {
+    width: 100%;
+  }
+}
+
+.tray {
+  margin: 8px;
+}
+
+

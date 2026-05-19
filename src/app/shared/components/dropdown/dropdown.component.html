@@ -1,0 +1,23 @@
+<div
+  [cdkMenuTriggerFor]="dropdown"
+  [cdkMenuPosition]="menuPosition"
+  #menuTrigger="cdkMenuTriggerFor"
+  (cdkMenuOpened)="onOpen()"
+  class="trigger"
+>
+  @if (!selectedItem()) {
+    <ng-content select=".empty-trigger" />
+  } @else {
+    <ng-content select=".trigger" />
+  }
+</div>
+
+<ng-template #dropdown>
+  <div class="options" #optionsRef>
+    <ng-content />
+
+    @if (!options().length) {
+      <ng-content select=".empty" />
+    }
+  </div>
+</ng-template>

@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  user-select: none;
+  position: relative;
+
+  $line-handler-size: 3px;
+
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.4s;
+
+  &:hover {
+    background: rgba(185, 185, 254, 0.553);
+  }
+
+  .handler {
+    position: absolute;
+    user-select: none;
+  }
+
+  &.horizontal {
+    width: 100%;
+    cursor: row-resize;
+    height: 1px;
+    min-height: 1px;
+
+    .handler {
+      height: $line-handler-size;
+      width: 100%;
+      translate: 0 -50%;
+    }
+  }
+
+  &.vertical {
+    height: 100%;
+    cursor: col-resize;
+    width: 1px;
+    min-width: 1px;
+
+    .handler {
+      height: 100%;
+      width: $line-handler-size;
+      translate: -50% 0;
+    }
+  }
+
+  &.corner {
+    position: absolute;
+    user-select: none;
+
+    $corner-handler-size: 4px;
+    width: $corner-handler-size;
+    height: $corner-handler-size;
+    z-index: 10;
+
+    &:hover {
+      background: rgba(185, 185, 254, 0.553);
+    }
+
+    &.top {
+      top: 0;
+
+      &.left {
+        left: 0;
+        translate: -50% -50%;
+        cursor: nwse-resize;
+      }
+
+      &.right {
+        right: 0;
+        translate: 50% -50%;
+        cursor: nesw-resize;
+      }
+    }
+
+    &.bottom {
+      bottom: 0;
+      translate: 0 50%;
+
+      &.left {
+        left: 0;
+        translate: -50% 50%;
+        cursor: nesw-resize;
+      }
+
+      &.right {
+        right: 0;
+        translate: 50% 50%;
+        cursor: nwse-resize;
+      }
+    }
+  }
+}
+
+.resize-overlay {
+  position: fixed;
+  --size: -10000px;
+  top: var(--size);
+  right: var(--size);
+  bottom: var(--size);
+  left: var(--size);
+  user-select: none;
+  cursor: inherit;
+}

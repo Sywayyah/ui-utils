@@ -9,12 +9,12 @@ import { UINodeConfig } from './node-config';
 import { InputContextInstance } from './node-input-context';
 import { SerializedUINodeInput } from './node-inputs';
 
-export interface SerializedNodeV3 {
+export interface SerializedNode {
   readonly id: string;
   readonly configId: string;
   readonly flags: number;
   readonly inputs: SerializedUINodeInput[];
-  readonly children: SerializedNodeV3[];
+  readonly children: SerializedNode[];
 }
 
 export enum NodesEditorState {
@@ -24,14 +24,14 @@ export enum NodesEditorState {
 
 const defaultNodeRoot = 'default';
 
-export interface SerializedEditorStateV3 {
+export interface SerializedEditorState {
   readonly roots: {
     readonly rootName: string;
-    readonly nodes: SerializedNodeV3[];
+    readonly nodes: SerializedNode[];
   }[];
 }
 
-export interface NodesRootV3 {
+export interface NodesRoot {
   readonly title: string;
   readonly rootName: string;
   // should only contain root nodes, no nested nodes
@@ -55,7 +55,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
   private readonly nodesMap = new ReactiveMap<string, UINode>();
   private readonly nodesByConfigsMap = new ReactiveMap<UINodeConfig, ReactiveList<UINode>>();
   private readonly configsMap = new Map<string, UINodeConfig>();
-  readonly nodeRoots = new ReactiveMap<string, NodesRootV3>();
+  readonly nodeRoots = new ReactiveMap<string, NodesRoot>();
 
   private onNodesLoadedListeners: (() => void)[] = [];
 
@@ -179,7 +179,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     this.onNodesLoadedListeners.push(listener);
   }
 
-  async serializeNode(node: UINode): Promise<SerializedNodeV3> {
+  async serializeNode(node: UINode): Promise<SerializedNode> {
     const serializedInputs = await Promise.all(
       node.getInputs().map(async (nodeInput) => {
         const serializedInputs = await Promise.all(
@@ -194,7 +194,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       }),
     );
 
-    const sNode: SerializedNodeV3 = {
+    const sNode: SerializedNode = {
       id: node.id,
       configId: node.getConfigId(),
       flags: node.flags.getFlags(),
@@ -205,13 +205,13 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     return sNode;
   }
 
-  async serializeNodes(nodes: UINode[] = this.nodes.getItems()): Promise<SerializedNodeV3[]> {
+  async serializeNodes(nodes: UINode[] = this.nodes.getItems()): Promise<SerializedNode[]> {
     const sNodes = await Promise.all(nodes.map(async (node) => this.serializeNode(node)));
     return sNodes;
   }
 
-  async serialize(): Promise<SerializedEditorStateV3> {
-    const sEditorState: SerializedEditorStateV3 = {
+  async serialize(): Promise<SerializedEditorState> {
+    const sEditorState: SerializedEditorState = {
       roots: [],
     };
 
@@ -227,7 +227,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     return sEditorState;
   }
 
-  async deserialize(serializedState: SerializedEditorStateV3): Promise<void> {
+  async deserialize(serializedState: SerializedEditorState): Promise<void> {
     this.state.next(NodesEditorState.LoadingNodes);
 
     await Promise.all(
@@ -257,7 +257,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     this.state.next(NodesEditorState.Normal);
   }
 
-  async deserializeNode(sNode: SerializedNodeV3): Promise<UINode> {
+  async deserializeNode(sNode: SerializedNode): Promise<UINode> {
     const configById = assertValue(
       this.configsMap.get(sNode.configId),
       `Nodes deserialzation: failed to find config with id ${sNode.configId}`,
@@ -308,7 +308,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     return node;
   }
 
-  async deserializeNodes(serializedNodes: SerializedNodeV3[]): Promise<UINode[]> {
+  async deserializeNodes(serializedNodes: SerializedNode[]): Promise<UINode[]> {
     const nodes = await Promise.all(
       serializedNodes.map(async (sNode) => this.deserializeNode(sNode)),
     );

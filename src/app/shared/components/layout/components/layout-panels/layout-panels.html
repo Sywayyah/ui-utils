@@ -1,0 +1,20 @@
+@for (panel of panels(); track $index) {
+  <!-- todo: bind in js? -->
+  <div
+    class="panel"
+    [style.width.px]="panel.width()"
+    [style.height.px]="panel.height()"
+    [style.min-width.px]="panel.minWidth()"
+    [style.min-height.px]="panel.minHeight()"
+    #panelElem
+  >
+    <ng-container *ngTemplateOutlet="panel.templateRef" />
+  </div>
+
+  @if (!$last) {
+    <app-resize-handler
+      [type]="resizeType()"
+      (resize)="onPanelResize($event, panel, panelElem, $index)"
+    />
+  }
+}

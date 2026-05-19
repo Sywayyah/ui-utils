@@ -1,0 +1,22 @@
+:host {
+  display: contents;
+}
+
+.tree-item {
+  display: flex;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background: #fefefe2b;
+  }
+
+  &.active {
+    background: #e3a856;
+    color: black;
+  }
+}
+
+.children {
+  margin-left: 16px;
+}

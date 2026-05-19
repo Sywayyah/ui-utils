@@ -3,7 +3,7 @@ import { UINode, UINodeFlags } from '../node';
 import { UINodeConfig } from '../node-config';
 import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
 import { UINodeInputsConfigMap } from '../node-inputs';
-import { SerializedNodeV3, UINodesEditor } from '../nodes-editor';
+import { SerializedNode, UINodesEditor } from '../nodes-editor';
 import { BaseEditingContext, EditingContextParams } from './context-base';
 
 export interface NestedNodeConfig<C extends UINodeConfig[]> {
@@ -14,7 +14,7 @@ export interface NestedNodeConfig<C extends UINodeConfig[]> {
 export type NestedNodeRefValue<C extends UINodeConfig[]> = {
   readonly node: UINode<C[number]>;
 };
-export type SerializedNestedNodeRefValue = { readonly node: SerializedNodeV3 };
+export type SerializedNestedNodeRefValue = { readonly node: SerializedNode };
 
 export type NestedNodeParams<C extends UINodeConfig[]> = EditingContextParams<{
   readonly context: {

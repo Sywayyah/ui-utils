@@ -1,0 +1,16 @@
+<div class="title">{{ dialogData.nodePickerParams.pickerTitle ?? 'Select Node' }}</div>
+
+<input
+  type="text"
+  [(ngModel)]="searchTerm"
+  placeholder="Search..."
+  (keydown.arrowdown)="$event.preventDefault(); $event.preventDefault(); list.focus()"
+/>
+
+<div class="items" cdkListbox #list="cdkListbox" (cdkListboxValueChange)="pickOption($event)">
+  @for (item of finalItems(); track $index) {
+    <button class="item" [cdkOption]="item.node" (click)="pickNode(item.node)">
+      <app-mini-ui [miniUi]="item.parts()" />
+    </button>
+  }
+</div>

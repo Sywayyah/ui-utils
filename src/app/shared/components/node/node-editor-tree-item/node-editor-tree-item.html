@@ -1,0 +1,15 @@
+@let selectedNodes = editor().selectedNodesSet.value$ | async;
+
+<div class="tree-item" [class.active]="selectedNodes?.has(node())" (click)="selectNode(node())">
+  {{ node().getConfigId() }}
+</div>
+
+@let childNodes = node().childNodes.value$ | async;
+
+@if (childNodes?.length) {
+  <div class="children">
+    @for (childNode of childNodes; track childNode.id) {
+      <app-node-editor-tree-item [node]="childNode" [editor]="editor()" />
+    }
+  </div>
+}
