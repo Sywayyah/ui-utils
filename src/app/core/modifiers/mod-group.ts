@@ -10,9 +10,6 @@ type ModsObject = object;
 
 // todo: think if it's needed
 // registry with mod refs?
-export class ModRef<T extends ModsObject> {
-  constructor(readonly mods: Partial<T>) {}
-}
 
 // recommendations:
 // 1. use numbers (1, 0) instead of flags, numbers can be added/removed to each other
@@ -22,10 +19,10 @@ export class ModRef<T extends ModsObject> {
 //  to avoid using closures, which potentially can help with serialization and memory usage
 
 // can be extended with some T provided
-export class ModGroup<T extends ModsObject> {
+export class ModGroup<T extends Partial<ModsObject>> {
   // todo: would it be better to have a map? where modrefs can be associated with anything
   // and later infered using some key as identity
-  private readonly modRefs = new ReactiveList<ModRef<T>>();
+  private readonly mods = new ReactiveList<T>();
 
   private readonly namedParentModGroupsMap = new ReactiveMap<string, ModGroup<T>>();
   // sets? add checks if present/absent ?
@@ -42,39 +39,39 @@ export class ModGroup<T extends ModsObject> {
     return this.combinedValues.listen();
   }
 
-  getModRefs(): ModRef<T>[] {
+  getMods(): T[] {
     return [
-      ...this.parentModGroups.getItems().flatMap((group) => group.getModRefs()),
-      ...this.modRefs.getValue(),
+      ...this.parentModGroups.getItems().flatMap((group) => group.getMods()),
+      ...this.mods.getValue(),
     ];
   }
 
   getAllModValues<const K extends keyof T>(modName: K): T[K][] {
     return [
       ...this.parentModGroups.getItems().flatMap((modGroup) => modGroup.getAllModValues(modName)),
-      ...(this.modRefs
+      ...(this.mods
         .getValue()
-        .map((modRef) => modRef.mods[modName])
+        .map((modRef) => modRef[modName])
         .filter(isNotNullish) as T[K][]),
     ];
   }
 
   getNumericModValue<
-    const K extends { [Key in keyof T]: T[Key] extends number ? Key : never }[keyof T],
+    const K extends { [Key in keyof Required<T>]: Required<T>[Key] extends number ? Key : never }[keyof T],
   >(modName: K): T[K] | undefined {
     return this.combinedValues.getValue()[modName];
   }
 
-  addModRef(modRef: ModRef<T>): void {
-    this.modRefs.push(modRef);
-    this.processAddedMods(modRef.mods);
-    this.childModGroups.getItems().forEach((group) => group.processAddedMods(modRef.mods));
+  addMods(mods: T): void {
+    this.mods.push(mods);
+    this.processAddedMods(mods);
+    this.childModGroups.getItems().forEach((group) => group.processAddedMods(mods));
   }
 
-  removeModRef(modRef: ModRef<T>): void {
-    this.modRefs.remove(modRef);
-    this.processRemovedMods(modRef.mods);
-    this.childModGroups.getItems().forEach((group) => group.processRemovedMods(modRef.mods));
+  removeMods(mods: T): void {
+    this.mods.remove(mods);
+    this.processRemovedMods(mods);
+    this.childModGroups.getItems().forEach((group) => group.processRemovedMods(mods));
   }
 
   addParentGroup(group: ModGroup<T>): void {

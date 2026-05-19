@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { ModGroup, ModRef } from '../core/modifiers/mod-group';
+import { ModGroup } from '../core/modifiers/mod-group';
 
-interface Mods {
+type Mods = Partial< {
   readonly attack: number;
   readonly defence: number;
-}
+}>;
 
 class TestMods extends ModGroup<Mods> {}
 
@@ -12,21 +12,21 @@ describe('mod group cases', () => {
   it('should verify scenario', () => {
     const group = new TestMods();
 
-    group.addModRef(new ModRef({ attack: 1 }));
-    group.addModRef(new ModRef({ attack: 2 }));
+    group.addMods({ attack: 1 });
+    group.addMods({ attack: 2 });
 
     expect(group.getNumericModValue('attack')).toBe(3);
 
     const parentGroup = new TestMods();
 
-    const negativeAttackMod = new ModRef({ attack: -4 });
+    const negativeAttackMod: Mods = { attack: -4 };
 
-    parentGroup.addModRef(negativeAttackMod);
+    parentGroup.addMods(negativeAttackMod);
 
     group.addParentGroup(parentGroup);
 
     expect(group.getNumericModValue('attack')).toBe(-1);
-    expect(group.getModRefs()).toHaveLength(3);
+    expect(group.getMods()).toHaveLength(3);
 
     const attackModValues = group.getAllModValues('attack');
 
@@ -35,7 +35,7 @@ describe('mod group cases', () => {
     expect(attackModValues).toContain(2);
     expect(attackModValues).toContain(-4);
 
-    parentGroup.removeModRef(negativeAttackMod);
+    parentGroup.removeMods(negativeAttackMod);
 
     expect(group.getNumericModValue('attack')).toBe(3);
   });
