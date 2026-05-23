@@ -28,6 +28,10 @@ export class ReactiveMap<K, V> extends ReactiveBase<Map<K, V>> {
     this.setValue(newMap);
   }
 
+  has(key: K): boolean {
+    return this.getValue().has(key);
+  }
+
   get(key: K): V {
     return assertValue(this.getValue().get(key));
   }
