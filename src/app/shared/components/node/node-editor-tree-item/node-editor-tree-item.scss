@@ -6,10 +6,21 @@
   display: flex;
   cursor: pointer;
   border-radius: 4px;
+  padding-left: 4px;
 
   &:hover {
     background: #fefefe2b;
   }
+
+  &.active {
+    background: #e3a856;
+    color: black;
+  }
+}
+
+.children-label {
+  padding: 0 12px;
+  cursor: pointer;
 
   &.active {
     background: #e3a856;

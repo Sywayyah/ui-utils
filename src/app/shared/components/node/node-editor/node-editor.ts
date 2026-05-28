@@ -9,10 +9,14 @@ import { LayoutPanels } from '../../layout/components/layout-panels/layout-panel
 import { Panel } from '../../layout/core/panel';
 import { NodeEditorTreeItem } from '../node-editor-tree-item/node-editor-tree-item';
 import { Node } from '../node/node';
-import { NodesRoot, SerializedEditorState, UINodesEditor } from '../../../../core/nodes/nodes-editor';
+import {
+  NodesRoot,
+  SerializedEditorState,
+  UINodesEditor,
+} from '../../../../core/nodes/nodes-editor';
 import { UINode } from '../../../../core/nodes/node';
 import { UINodeConfig } from '../../../../core/nodes/node-config';
-import { NodeInlineView } from "../node-inline-view/node-inline-view";
+import { NodeInlineView } from '../node-inline-view/node-inline-view';
 
 @Component({
   selector: 'app-node-editor',
@@ -28,8 +32,8 @@ import { NodeInlineView } from "../node-inline-view/node-inline-view";
     CdkMenu,
     CdkMenuTrigger,
     NodeEditorTreeItem,
-    NodeInlineView
-],
+    NodeInlineView,
+  ],
   templateUrl: './node-editor.html',
   styleUrl: './node-editor.scss',
 })
@@ -44,6 +48,7 @@ export class NodeEditor {
 
   selectNode(node: UINode): void {
     const selectedNodesSet = this.editor().selectedNodesSet;
+    this.editor().isChildrenSelected.setValue(false);
 
     if (selectedNodesSet.has(node)) {
       this.editor().selectedNodesSet.clear();
@@ -66,8 +71,9 @@ export class NodeEditor {
 
     const editor = this.editor();
     const selectedItems = editor.selectedNodesSet.getItems();
+    const isChildrenSelected = editor.isChildrenSelected.getValue();
 
-    if (selectedItems.length === 1) {
+    if (selectedItems.length === 1 && isChildrenSelected) {
       const node = await editor.addChildNodeToNodeByConfig(config, selectedItems[0]);
       this.selectNode(node);
       return;

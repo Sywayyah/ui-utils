@@ -1,4 +1,4 @@
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveMap } from '../reactive/reactive-map';
 import { ReactiveSet } from '../reactive/reactive-set';
@@ -9,6 +9,8 @@ import { UINodeConfig } from './node-config';
 import { InputContextInstance } from './node-input-context';
 import { SerializedUINodeInput } from './node-inputs';
 import { RootConfig } from './node-roots';
+import { ReactiveValue } from '../reactive/reactive-value';
+import { MiniUI } from '../mini-ui/mini-ui';
 
 export interface SerializedNode {
   readonly id: string;
@@ -51,6 +53,7 @@ export type NodesEditorParams = {
       readonly rootConfig?: RootConfig;
     }
   >;
+  readonly nodePreviewer?: (node: UINode) => Observable<MiniUI>;
 };
 
 // todo: flush current state when opening new file
@@ -64,6 +67,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
 
   private onNodesLoadedListeners: (() => void)[] = [];
 
+  readonly isChildrenSelected = new ReactiveValue(false);
   readonly selectedNodesSet = new ReactiveSet<UINode>();
 
   readonly selectedNodesState$ = this.selectedNodesSet.value$.pipe(

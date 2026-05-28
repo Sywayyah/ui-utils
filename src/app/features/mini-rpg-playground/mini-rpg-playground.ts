@@ -165,5 +165,22 @@ export class MiniRpgPlayground {
         configs: [Spell],
       },
     },
+    nodePreviewer: (node) =>
+      new UINodeTypeSwitcher(of(miniUi.textLabel(node.getConfigName())))
+        .addCase(Resource, (n) =>
+          n.listenInputsValues().pipe(
+            map((values) =>
+              miniUi
+                .flexRowHost()
+                .addElem(new MiniUIText('Resource - '))
+                .addElem(new MiniUIImage({ src: values.img.image?.objectUrl ?? '' }), {
+                  width: '25px',
+                  height: '25px',
+                })
+                .addElem(new MiniUIText(values.name || 'Unnamed')),
+            ),
+          ),
+        )
+        .switchNode(node),
   });
 }

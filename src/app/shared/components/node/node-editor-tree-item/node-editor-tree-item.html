@@ -1,10 +1,31 @@
 @let selectedNodes = editor().selectedNodesSet.value$ | async;
+@let childrenSelected = editor().isChildrenSelected.value$ | async;
 
-<div class="tree-item" [class.active]="selectedNodes?.has(node())" (click)="selectNode(node())">
-  {{ node().getConfigId() }}
+@let isNodeSelected = selectedNodes?.has(node());
+
+@let nodePreviewMiniUI = previewer() | async;
+
+<div
+  class="tree-item"
+  [class.active]="isNodeSelected && !childrenSelected"
+  (click)="selectNode(node())"
+>
+  @if (nodePreviewMiniUI) {
+    <app-mini-ui [miniUi]="nodePreviewMiniUI" />
+  } @else {
+    {{ node().getConfigId() }}
+  }
 </div>
 
 @let childNodes = node().childNodes.value$ | async;
+
+<div
+  class="children-label"
+  [class.active]="isNodeSelected && childrenSelected"
+  (click)="selectNodeChildren()"
+>
+  Children
+</div>
 
 @if (childNodes?.length) {
   <div class="children">
