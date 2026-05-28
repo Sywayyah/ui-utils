@@ -1,6 +1,13 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { AsyncPipe, NgComponentOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Injector, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  inject,
+  Injector,
+  input,
+} from '@angular/core';
 import { UINode } from '../../../../core/nodes/node';
 import { UINodeConfig } from '../../../../core/nodes/node-config';
 import { UINodesEditor } from '../../../../core/nodes/nodes-editor';
@@ -11,7 +18,7 @@ import { DropdownOptionComponent } from '../../dropdown/dropdown-option.componen
 import { DropdownComponent } from '../../dropdown/dropdown.component';
 import { Icon } from '../../icon/icon';
 import { MiniUiComponent } from '../../mini-ui/mini-ui';
-import { InputsV3Service } from '../inputs/inputs.service';
+import { InputsService } from '../inputs/inputs.service';
 
 @Component({
   selector: 'app-node-inputs',
@@ -25,7 +32,7 @@ import { InputsV3Service } from '../inputs/inputs.service';
     NgComponentOutlet,
     DropdownComponent,
     DropdownOptionComponent,
-    MiniUiComponent,
+    forwardRef(() => MiniUiComponent),
   ],
   templateUrl: './node-inputs.html',
   styleUrl: './node-inputs.scss',
@@ -33,7 +40,7 @@ import { InputsV3Service } from '../inputs/inputs.service';
 })
 export class NodeInputs {
   readonly injector = inject(Injector);
-  readonly inputsService = inject(InputsV3Service);
+  readonly inputsService = inject(InputsService);
 
   readonly node = input.required<UINode>();
   readonly editor = input.required<UINodesEditor>();

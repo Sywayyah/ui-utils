@@ -21,7 +21,7 @@ import {
 } from './input-components';
 
 @Injectable({ providedIn: 'root' })
-export class InputsV3Service {
+export class InputsService {
   readonly regsitry = new ReactiveMap<
     typeof BaseEditingContext<DefaultEditingContextParams>,
     Type<ContextBaseComponent>

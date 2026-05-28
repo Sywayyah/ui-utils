@@ -3,6 +3,7 @@ import {
   MiniUIBaseElement,
   MiniUIElem,
   MiniUIImage,
+  MiniUINodeInput,
   MiniUIText,
 } from '../../../core/mini-ui/mini-ui';
 import {
@@ -11,6 +12,7 @@ import {
   MiniUITextComponent,
 } from '../../../core/mini-ui/mini-ui-components';
 import { ReactiveMap } from '../../../core/reactive/reactive-map';
+import { MiniUINodeInputComponent } from '../../../core/mini-ui/mini-ui-inputs.component';
 
 @Injectable({ providedIn: 'root' })
 export class MiniUIService {
@@ -22,6 +24,7 @@ export class MiniUIService {
   constructor() {
     this.register(MiniUIText, MiniUITextComponent);
     this.register(MiniUIImage, MiniUIImageComponent);
+    this.register(MiniUINodeInput, MiniUINodeInputComponent);
   }
 
   register<T>(

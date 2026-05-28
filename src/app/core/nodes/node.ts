@@ -1,14 +1,14 @@
 import { map, merge, Observable, switchMap } from 'rxjs';
-import { UINodesEditor } from './nodes-editor';
-import { ReactiveValue } from '../reactive/reactive-value';
+import { ReactiveFlags } from '../reactive/reactive-flags';
 import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveObjectTypedMap } from '../reactive/reactive-map';
-import { UINodeInputsConfigMap, UINodeInput, NodeInputsMap } from './node-inputs';
+import { ReactiveValue } from '../reactive/reactive-value';
 import { ReactiveWeakSet } from '../reactive/reactive-weak-set';
-import { ReactiveFlags } from '../reactive/reactive-flags';
-import { InputContextInstance } from './node-input-context';
 import { assertValue } from '../utils/general';
 import { UINodeConfig } from './node-config';
+import { InputContextInstance } from './node-input-context';
+import { NodeInputOptions, NodeInputsMap, UINodeInput, UINodeInputsConfigMap } from './node-inputs';
+import { UINodesEditor } from './nodes-editor';
 
 type ParentNode = UINode | null;
 
@@ -53,10 +53,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
     }
 
     Object.entries(config.inputs).forEach(([inputName, options]) => {
-      newNode.inputsMap.set(
-        inputName,
-        new UINodeInput(inputName, options, new ReactiveList()),
-      );
+      newNode.inputsMap.set(inputName, new UINodeInput(inputName, options, new ReactiveList()));
     });
 
     if (initInputs) {
@@ -150,8 +147,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
   // methods - input values
 
   async addInputValue<const K extends keyof T['inputs']>(inputName: K): Promise<void> {
-    const inputOptions =
-      this.config.getValue().inputs[inputName as keyof UINodeConfig['inputs']];
+    const inputOptions = this.config.getValue().inputs[inputName as keyof UINodeConfig['inputs']];
 
     const context = await InputContextInstance.createNew({
       inputConfig: inputOptions,
@@ -250,6 +246,29 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
     });
 
     return contexts;
+  }
+
+  // methods - context instances
+
+  getInputContextInstance<const K extends keyof T['inputs']>(
+    inputName: K,
+    i = 0,
+  ): InputContextInstance<NodeInputOptions<T['inputs'][K]['config']['__editingParam']>> {
+    const inputContent = this.inputsMap.get(inputName);
+
+    const ctxInstances = inputContent.list.getValue();
+
+    return assertValue(ctxInstances.at(i));
+  }
+
+  getInputContextInstances<const K extends keyof T['inputs']>(
+    inputName: K,
+  ): InputContextInstance<NodeInputOptions<T['inputs'][K]['config']['__editingParam']>>[] {
+    const inputContent = this.inputsMap.get(inputName);
+
+    const ctxInstances = inputContent.list.getValue();
+
+    return ctxInstances;
   }
 
   // methods - children

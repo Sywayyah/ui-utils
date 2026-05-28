@@ -1,9 +1,9 @@
-@for (elem of elems(); track $index) {
+@for (elem of mappedElems(); track $index) {
   <ng-container
     *ngComponentOutlet="
-      miniUiService.getComponentForElem(elem);
+      elem.component;
       inputs: {
-        elem: elem,
+        elem: elem.elem,
       };
       injector: injector
     "

@@ -90,7 +90,8 @@ export class PrimitiveComponent extends ContextBaseComponent<
       }
     </app-dropdown>
   `,
-  imports: [DropdownOptionComponent, DropdownComponent, MiniUiComponent],
+  // todo: check MiniUiComponent circular dependencies
+  imports: [DropdownOptionComponent, DropdownComponent, forwardRef(() => MiniUiComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropdownEditingComponent extends ContextBaseComponent<
@@ -107,7 +108,7 @@ export class DropdownEditingComponent extends ContextBaseComponent<
       />
     </button>
   `,
-  imports: [Btn, AsyncPipe, MiniUiComponent],
+  imports: [Btn, AsyncPipe, forwardRef(() => MiniUiComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NodeRefEditingComponent extends ContextBaseComponent<

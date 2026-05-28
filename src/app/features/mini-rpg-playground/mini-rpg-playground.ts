@@ -11,6 +11,7 @@ import { NestedNodeEditingContext } from '../../core/nodes/editing-context/neste
 import { NodeEditor } from '../../shared/components/node/node-editor/node-editor';
 import { UINodesEditor } from '../../core/nodes/nodes-editor';
 import { DropdownEditingContext } from '../../core/nodes/editing-context/dropdown';
+import { GUIScript } from '../../core/configs/gui-script/gui-script.config';
 
 const Resource = createNodeConfig({
   id: 'resource',
@@ -50,13 +51,13 @@ const ResourceCost = createNodeConfig({
                 miniUi
                   .flexRowHost()
                   .addElem(
-                    MiniUIImage,
-                    {
+                    new MiniUIImage({
                       src: n.getInputValue('img').image?.objectUrl ?? 'no-img',
-                    },
+                    }),
+
                     { width: `20px`, height: `20px`, imageRendering: 'pixelated' },
                   )
-                  .addElem(MiniUIText, n.getInputValue('name')),
+                  .addElem(new MiniUIText(n.getInputValue('name'))),
               text: n.getInputValue('name'),
             }))
             .switchNode(node),
@@ -68,13 +69,12 @@ const ResourceCost = createNodeConfig({
                   miniUi
                     .flexRowHost()
                     .addElem(
-                      MiniUIImage,
-                      {
+                      new MiniUIImage({
                         src: vals.img.image?.objectUrl ?? 'no-img',
-                      },
+                      }),
                       { width: `20px`, height: `20px`, imageRendering: 'pixelated' },
                     )
-                    .addElem(MiniUIText, vals.name),
+                    .addElem(new MiniUIText(vals.name)),
                 ),
               ),
             )
@@ -144,6 +144,11 @@ export class MiniRpgPlayground {
       resources: { title: 'Resources', configs: [Folder, Resource] },
       units: { title: 'Units', configs: [Folder] },
       buildings: { title: 'Buildings', configs: [Folder, Building] },
+      scripts: {
+        title: 'Scripts',
+        configs: [GUIScript.Core.Expression, GUIScript.Core.Identifier],
+        rootConfig: GUIScript.rootConfig,
+      },
     },
   });
 }

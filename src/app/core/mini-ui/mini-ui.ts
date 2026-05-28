@@ -1,3 +1,6 @@
+import { UINode } from '../nodes/node';
+import { UINodeConfig } from '../nodes/node-config';
+import { UINodesEditor } from '../nodes/nodes-editor';
 import { ReactiveList } from '../reactive/reactive-list';
 
 export interface MiniUIElem<T extends MiniUIBaseElement<unknown> = MiniUIBaseElement<unknown>> {
@@ -19,13 +22,9 @@ export class MiniUI {
 
   constructor(readonly params: MiniUIParams) {}
 
-  addElem<const T extends typeof MiniUIBaseElement<unknown>>(
-    elemType: T,
-    params: T extends typeof MiniUIBaseElement<infer U> ? U : never,
-    styles?: MiniUIElemCSSStyles,
-  ): MiniUI {
+  addElem<T extends MiniUIBaseElement<unknown>>(elem: T, styles?: MiniUIElemCSSStyles): MiniUI {
     const newElem: MiniUIElem = {
-      elem: new elemType(params),
+      elem,
       styles,
     };
 
@@ -47,7 +46,14 @@ export const miniUi = {
     return new MiniUI({ hostStyles: { display: 'contents' } });
   },
   textLabel(text: string): MiniUI {
-    return this.flexRowHost().addElem(MiniUIText, text);
+    return this.flexRowHost().addElem(new MiniUIText(text));
+  },
+  nodeInput<const K extends keyof T['inputs'], const T extends UINodeConfig>(params: {
+    readonly node: UINode<T>;
+    readonly inputName: K;
+    readonly editor: UINodesEditor;
+  }): MiniUI {
+    return this.flexRowHost().addElem(new MiniUINodeInput(params));
   },
 };
 
@@ -59,5 +65,11 @@ export class MiniUIBaseElement<T> {
 export class MiniUIText extends MiniUIBaseElement<string> {}
 export class MiniUIImage extends MiniUIBaseElement<{ readonly src: string }> {}
 export class MiniUIButton extends MiniUIBaseElement<{ readonly src: string }> {}
-
-miniUi.flexRowHost().addElem(MiniUIText, '').addElem(MiniUIImage, { src: '' });
+export class MiniUINodeInput<
+  const K extends keyof T['inputs'],
+  const T extends UINodeConfig,
+> extends MiniUIBaseElement<{
+  readonly node: UINode<T>;
+  readonly inputName: K;
+  readonly editor: UINodesEditor;
+}> {}

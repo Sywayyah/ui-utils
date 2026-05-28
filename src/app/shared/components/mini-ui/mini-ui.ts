@@ -30,4 +30,10 @@ export class MiniUiComponent {
 
   readonly elems = fromObservableInput(() => this.miniUi()?.elems.value$ ?? of([]), []);
   readonly hostStyles = computed(() => this.miniUi()?.params.hostStyles);
+
+  readonly mappedElems = computed(() => {
+    const elems = this.elems();
+
+    return elems.map((elem) => ({ elem, component: this.miniUiService.getComponentForElem(elem) }));
+  });
 }

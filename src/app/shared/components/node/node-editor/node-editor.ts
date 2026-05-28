@@ -12,6 +12,7 @@ import { Node } from '../node/node';
 import { NodesRoot, SerializedEditorState, UINodesEditor } from '../../../../core/nodes/nodes-editor';
 import { UINode } from '../../../../core/nodes/node';
 import { UINodeConfig } from '../../../../core/nodes/node-config';
+import { NodeInlineView } from "../node-inline-view/node-inline-view";
 
 @Component({
   selector: 'app-node-editor',
@@ -27,7 +28,8 @@ import { UINodeConfig } from '../../../../core/nodes/node-config';
     CdkMenu,
     CdkMenuTrigger,
     NodeEditorTreeItem,
-  ],
+    NodeInlineView
+],
   templateUrl: './node-editor.html',
   styleUrl: './node-editor.scss',
 })

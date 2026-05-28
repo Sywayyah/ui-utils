@@ -8,6 +8,7 @@ import { UINode, UINodeFlags } from './node';
 import { UINodeConfig } from './node-config';
 import { InputContextInstance } from './node-input-context';
 import { SerializedUINodeInput } from './node-inputs';
+import { RootConfig } from './node-roots';
 
 export interface SerializedNode {
   readonly id: string;
@@ -37,6 +38,7 @@ export interface NodesRoot {
   // should only contain root nodes, no nested nodes
   readonly nodes: ReactiveList<UINode>;
   readonly nodeConfigs?: UINodeConfig[];
+  readonly rootConfig?: RootConfig;
 }
 
 export type NodesEditorParams = {
@@ -46,6 +48,7 @@ export type NodesEditorParams = {
     {
       readonly title: string;
       readonly configs?: UINodeConfig[];
+      readonly rootConfig?: RootConfig;
     }
   >;
 };
@@ -94,6 +97,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
           title: config.title,
           nodes: new ReactiveList(),
           nodeConfigs: config.configs,
+          rootConfig: config.rootConfig,
         });
       });
     } else {
@@ -246,6 +250,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
           rootName: rootName,
           nodes: new ReactiveList(await this.deserializeNodes(sRoot?.nodes)),
           nodeConfigs: rootConfig.configs,
+          rootConfig: rootConfig.rootConfig,
         });
       }),
     );

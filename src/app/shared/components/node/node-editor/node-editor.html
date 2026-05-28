@@ -79,6 +79,11 @@
       } @empty {
         No nodes selected
       }
+      @if (root.rootConfig?.params?.style === 'inline') {
+        @for (node of activeNodeRoot()?.nodes?.value$ | async; track $index) {
+          <app-node-inline-view [node]="node" [editor]="editor()" [root]="root" />
+        }
+      }
     } @else {
       Select Root
     }
