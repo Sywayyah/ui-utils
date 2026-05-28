@@ -8,6 +8,7 @@ import { ImageFileEditingContext } from '../../../../core/nodes/editing-context/
 import { NestedNodeEditingContext } from '../../../../core/nodes/editing-context/nested-node';
 import { NodeRefEditingContext } from '../../../../core/nodes/editing-context/node-ref';
 import { PrimitiveEditingContext } from '../../../../core/nodes/editing-context/primitives';
+import { ScriptEditingContext } from '../../../../core/nodes/editing-context/script';
 import { InputContextInstance } from '../../../../core/nodes/node-input-context';
 import { NodeInputOptions } from '../../../../core/nodes/node-inputs';
 import { ReactiveMap } from '../../../../core/reactive/reactive-map';
@@ -19,6 +20,7 @@ import {
   NodeRefEditingComponent,
   PrimitiveComponent,
 } from './input-components';
+import { ScriptEditingComponent } from './script-input.component';
 
 @Injectable({ providedIn: 'root' })
 export class InputsService {
@@ -33,6 +35,7 @@ export class InputsService {
     this.register(NodeRefEditingContext, NodeRefEditingComponent);
     this.register(NestedNodeEditingContext, NestedNodeEditingComponent);
     this.register(ImageFileEditingContext, ImageFileEditingComponent);
+    this.register(ScriptEditingContext, ScriptEditingComponent);
   }
 
   register<T extends ContextBaseComponent>(

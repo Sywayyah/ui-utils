@@ -4,6 +4,7 @@ import { PrimitiveEditingContext } from '../../nodes/editing-context/primitives'
 import { createRootConfig, RootStyle } from '../../nodes/node-roots';
 import { UINodeTypeSwitcher } from '../../nodes/nodes-switcher';
 
+// put aside for a while, monaco editor is preferred for now
 export namespace GUIScript {
   export const rootConfig = createRootConfig({
     idPrefix: 'guis',

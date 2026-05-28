@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
 import { map, of } from 'rxjs';
 import { miniUi, MiniUIImage, MiniUIText } from '../../core/mini-ui/mini-ui';
-import { Btn } from '../../shared/components/btn/btn';
-import { createNodeConfig } from '../../core/nodes/node-config';
-import { PrimitiveEditingContext } from '../../core/nodes/editing-context/primitives';
-import { ImageFileEditingContext } from '../../core/nodes/editing-context/image-file';
-import { NodeRefEditingContext } from '../../core/nodes/editing-context/node-ref';
-import { UINodeTypeSwitcher } from '../../core/nodes/nodes-switcher';
-import { NestedNodeEditingContext } from '../../core/nodes/editing-context/nested-node';
-import { NodeEditor } from '../../shared/components/node/node-editor/node-editor';
-import { UINodesEditor } from '../../core/nodes/nodes-editor';
 import { DropdownEditingContext } from '../../core/nodes/editing-context/dropdown';
-import { GUIScript } from '../../core/configs/gui-script/gui-script.config';
+import { ImageFileEditingContext } from '../../core/nodes/editing-context/image-file';
+import { NestedNodeEditingContext } from '../../core/nodes/editing-context/nested-node';
+import { NodeRefEditingContext } from '../../core/nodes/editing-context/node-ref';
+import { PrimitiveEditingContext } from '../../core/nodes/editing-context/primitives';
+import { ScriptEditingContext } from '../../core/nodes/editing-context/script';
+import { createNodeConfig } from '../../core/nodes/node-config';
+import { UINodesEditor } from '../../core/nodes/nodes-editor';
+import { UINodeTypeSwitcher } from '../../core/nodes/nodes-switcher';
+import { Btn } from '../../shared/components/btn/btn';
+import { NodeEditor } from '../../shared/components/node/node-editor/node-editor';
 
 const Resource = createNodeConfig({
   id: 'resource',
@@ -131,6 +131,21 @@ const Building = createNodeConfig({
 
 const Folder = createNodeConfig({ id: 'folder', name: 'Folder', inputs: {} });
 
+const Spell = createNodeConfig({
+  id: 'spell',
+  name: 'Spell',
+  inputs: {
+    name: {
+      config: PrimitiveEditingContext.createText({ initVal: 'Name' }),
+      uiParts: () => miniUi.textLabel('Name'),
+    },
+    code: {
+      config: ScriptEditingContext.createScriptEditor({ types: `declare const appTitle: string;` }),
+      uiParts: () => miniUi.textLabel('Script'),
+    },
+  },
+});
+
 @Component({
   selector: 'app-mini-rpg-playground',
   imports: [NodeEditor, Btn],
@@ -139,15 +154,15 @@ const Folder = createNodeConfig({ id: 'folder', name: 'Folder', inputs: {} });
 })
 export class MiniRpgPlayground {
   readonly editor = new UINodesEditor({
-    configs: [Resource, ResourceCost, Building],
+    configs: [Resource, ResourceCost, Building, Spell],
     nodeRoots: {
       resources: { title: 'Resources', configs: [Folder, Resource] },
       units: { title: 'Units', configs: [Folder] },
       buildings: { title: 'Buildings', configs: [Folder, Building] },
-      scripts: {
-        title: 'Scripts',
-        configs: [GUIScript.Core.Expression, GUIScript.Core.Identifier],
-        rootConfig: GUIScript.rootConfig,
+
+      spells: {
+        title: 'Spells',
+        configs: [Spell],
       },
     },
   });
