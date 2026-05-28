@@ -21,9 +21,13 @@ import * as monaco from 'monaco-editor';
   `,
   imports: [FormsModule, MonacoEditorModule],
   styles: `
+    :host {
+      display: block;
+    }
+
     .editor-container {
       width: 100%;
-      height: 500px; /* Обязательно укажите высоту */
+      height: 500px;
       border: 1px solid #444;
       $width: 500px;
       min-width: $width;
