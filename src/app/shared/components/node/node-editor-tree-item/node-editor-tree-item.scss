@@ -19,8 +19,19 @@
 }
 
 .children-label {
-  padding: 0 12px;
+  padding: 0 14px;
   cursor: pointer;
+  position: relative;
+
+  > .link {
+    position: absolute;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid gray;
+    height: 8px;
+    width: 4px;
+    left: 6px;
+    top: 2px;
+  }
 
   &.active {
     background: #e3a856;
