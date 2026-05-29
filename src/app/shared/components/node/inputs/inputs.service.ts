@@ -18,9 +18,11 @@ import {
   ImageFileEditingComponent,
   NestedNodeEditingComponent,
   NodeRefEditingComponent,
+  NumRangeEditingComponent,
   PrimitiveComponent,
 } from './input-components';
 import { ScriptEditingComponent } from './script-input.component';
+import { NumRangeEditingContext } from '../../../../core/nodes/editing-context/num-range';
 
 @Injectable({ providedIn: 'root' })
 export class InputsService {
@@ -36,6 +38,7 @@ export class InputsService {
     this.register(NestedNodeEditingContext, NestedNodeEditingComponent);
     this.register(ImageFileEditingContext, ImageFileEditingComponent);
     this.register(ScriptEditingContext, ScriptEditingComponent);
+    this.register(NumRangeEditingContext, NumRangeEditingComponent as any);
   }
 
   register<T extends ContextBaseComponent>(

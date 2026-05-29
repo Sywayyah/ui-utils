@@ -39,6 +39,7 @@ import { DropdownComponent } from '../../dropdown/dropdown.component';
 import { MiniUiComponent } from '../../mini-ui/mini-ui';
 import { NodeInputs } from '../node-inputs/node-inputs';
 import { NodePickerDialog } from '../node-picker-dialog/node-picker-dialog';
+import { NumRangeContextParams, NumRangeEditingContext } from '../../../../core/nodes/editing-context/num-range';
 
 @Component({
   template: 'Component is not recognized',
@@ -204,3 +205,15 @@ export class ImageFileEditingComponent extends ContextBaseComponent<
     prop.setValue(newVal);
   }
 }
+
+@Component({
+  template: `
+    <input type="number" [appValueBind]="context().instance.min.value" />
+    <input type="number" [appValueBind]="context().instance.max.value" />
+  `,
+  imports: [ReactiveValueBindDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class NumRangeEditingComponent extends ContextBaseComponent<
+  NumRangeEditingContext<NumRangeContextParams>
+> {}
