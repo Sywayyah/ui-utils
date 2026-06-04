@@ -1,8 +1,8 @@
-import { Component, computed, input } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
 import { UINode } from '../../../../core/nodes/node';
 import { UINodesEditor } from '../../../../core/nodes/nodes-editor';
-import { MiniUiComponent } from "../../mini-ui/mini-ui";
+import { MiniUiComponent } from '../../mini-ui/mini-ui';
 
 @Component({
   selector: 'app-node-editor-tree-item',

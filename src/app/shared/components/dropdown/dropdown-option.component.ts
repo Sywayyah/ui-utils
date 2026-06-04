@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, input } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { injectHostElem } from '../../../core/utils/inject';
 import { DropdownComponent } from './dropdown.component';
 

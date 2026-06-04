@@ -1,6 +1,13 @@
 import { CdkMenu, CdkMenuBar, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, input, model } from '@angular/core';
+import { UINode } from '../../../../core/nodes/node';
+import { UINodeConfig } from '../../../../core/nodes/node-config';
+import {
+  NodesRoot,
+  SerializedEditorState,
+  UINodesEditor,
+} from '../../../../core/nodes/nodes-editor';
 import { fromObservableInput } from '../../../../core/utils/effects';
 import { FileHandler } from '../../../../core/utils/file-system';
 import { Btn } from '../../btn/btn';
@@ -8,15 +15,8 @@ import { Icon } from '../../icon/icon';
 import { LayoutPanels } from '../../layout/components/layout-panels/layout-panels';
 import { Panel } from '../../layout/core/panel';
 import { NodeEditorTreeItem } from '../node-editor-tree-item/node-editor-tree-item';
-import { Node } from '../node/node';
-import {
-  NodesRoot,
-  SerializedEditorState,
-  UINodesEditor,
-} from '../../../../core/nodes/nodes-editor';
-import { UINode } from '../../../../core/nodes/node';
-import { UINodeConfig } from '../../../../core/nodes/node-config';
 import { NodeInlineView } from '../node-inline-view/node-inline-view';
+import { Node } from '../node/node';
 
 @Component({
   selector: 'app-node-editor',
