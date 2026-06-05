@@ -145,7 +145,22 @@ const Spell = createNodeConfig({
       uiParts: () => miniUi.textLabel('Name'),
     },
     code: {
-      config: ScriptEditingContext.createScriptEditor({ types: `declare const appTitle: string;` }),
+      config: ScriptEditingContext.createScriptEditor({
+        types: `
+        declare const appTitle: string;
+         interface SpellHandler {
+          onSpellTargeted(): void;
+        }
+        `,
+        initialScript: [
+          '// do not remove this constant or method',
+          '// game expects them to be present in order to work',
+          'const spellHandler: SpellHandler = {',
+          '  onSpellTargeted(): void {',
+          '  }',
+          '};',
+        ].join('\n'),
+      }),
       uiParts: () => miniUi.textLabel('Script'),
     },
   },

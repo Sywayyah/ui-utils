@@ -10,6 +10,7 @@ import { BaseEditingContext, EditingContextParams } from './context-base';
 
 interface ScriptEditingParams {
   readonly types: string;
+  readonly initialScript?: string;
 }
 
 export type ScriptContextParams<V extends string> = EditingContextParams<{
@@ -45,13 +46,14 @@ export class ScriptEditingContext<
   }
 
   override async createContext(params: { readonly parentNode: UINode }): Promise<T['context']> {
+    const initialScript = this.params.initialScript ?? '';
     return {
       script: await ContextProperty.createNew({
-        initVal: '',
+        initVal: initialScript,
         propConfig: scriptPropConfig(),
       }),
       compiled: await ContextProperty.createNew({
-        initVal: '',
+        initVal: initialScript,
         propConfig: scriptPropConfig(),
       }),
     };
