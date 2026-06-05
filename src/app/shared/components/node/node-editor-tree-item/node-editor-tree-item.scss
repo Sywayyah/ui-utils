@@ -9,6 +9,7 @@
   padding-left: 4px;
   white-space: nowrap;
   position: relative;
+  text-overflow: ellipsis;
 
   &.child {
     padding-left: 14px;
@@ -37,6 +38,7 @@
 .toggle-children-icon {
   cursor: pointer;
   color: gold;
+  user-select: none;
 }
 
 .cut {
@@ -68,5 +70,5 @@
 
 .children {
   margin-left: 16px;
-  overflow-y: hidden;
+  overflow: hidden;
 }

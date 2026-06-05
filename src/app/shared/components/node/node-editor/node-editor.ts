@@ -134,10 +134,20 @@ export class NodeEditor {
     const selectedItems = editor.selectedNodesSet.getItems();
     const isChildrenSelected = editor.isChildrenSelected.getValue();
 
-    if (selectedItems.length === 1 && isChildrenSelected) {
-      const node = await editor.addChildNodeToNodeByConfig(config, selectedItems[0]);
-      this.selectNode(node);
-      return;
+    if (selectedItems.length === 1) {
+      if (isChildrenSelected) {
+        const node = await editor.addChildNodeToNodeByConfig(config, selectedItems[0]);
+        this.selectNode(node);
+        return;
+      }
+
+      const parent = selectedItems[0].parent.getValue();
+
+      if (parent) {
+        const node = await editor.addChildNodeToNodeByConfig(config, parent);
+        this.selectNode(node);
+        return;
+      }
     }
 
     const nodes = await editor.addNodeByConfig(root.rootName, config);

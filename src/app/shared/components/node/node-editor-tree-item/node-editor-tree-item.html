@@ -40,10 +40,11 @@
     <app-icon
       class="toggle-children-icon"
       (click)="$event.stopPropagation(); toggleShowChildren()"
+      title="Toggle to see child nodes"
       >{{ (node().showChildren.value$ | async) ? 'indeterminate_check_box' : 'add_box' }}</app-icon
     >
     <div class="link"></div>
-    Children
+    Items
   </div>
 
   @if (childNodes?.length && (node().showChildren.value$ | async)) {
