@@ -27,6 +27,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
   readonly parent = new ReactiveValue<ParentNode>(null);
   readonly referencedByNodesSet = new ReactiveWeakSet<UINode<UINodeConfig>>();
   readonly flags = new ReactiveFlags<UINodeFlags>();
+  readonly showChildren = new ReactiveValue(true);
 
   private constructor({ id, config }: { readonly id: string; readonly config: T }) {
     this.id = id;
@@ -320,5 +321,23 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
     node.parent.setValue(null);
 
     return node;
+  }
+
+  // methods - parents
+
+  isDeepChildOf(targetNode: UINode): boolean {
+    const parent = this.parent.getValue();
+
+    if (!parent) return false;
+
+    return parent === targetNode ? true : parent?.isDeepChildOf(targetNode);
+  }
+
+  detachFromParent(): void {
+    const parent = this.parent.getValue();
+
+    if (!parent) return;
+
+    parent.removeChildNode(this);
   }
 }

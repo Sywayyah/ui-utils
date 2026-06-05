@@ -7,6 +7,22 @@
   cursor: pointer;
   border-radius: 4px;
   padding-left: 4px;
+  white-space: nowrap;
+  position: relative;
+
+  &.child {
+    padding-left: 14px;
+  }
+
+  .sub-link {
+    position: absolute;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid gray;
+    height: 100px;
+    width: 4px;
+    left: 6px;
+    bottom: 12px;
+  }
 
   &:hover {
     background: #fefefe2b;
@@ -18,8 +34,19 @@
   }
 }
 
+.toggle-children-icon {
+  cursor: pointer;
+  color: gold;
+}
+
+.cut {
+  opacity: 0.5;
+}
+
 .children-label {
   padding: 0 14px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   position: relative;
 
@@ -41,4 +68,5 @@
 
 .children {
   margin-left: 16px;
+  overflow-y: hidden;
 }

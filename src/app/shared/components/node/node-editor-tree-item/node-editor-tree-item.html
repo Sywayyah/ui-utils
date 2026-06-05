@@ -1,15 +1,24 @@
 @let selectedNodes = editor().selectedNodesSet.value$ | async;
+@let cutNodes = editor().cutNodesSet.value$ | async;
 @let childrenSelected = editor().isChildrenSelected.value$ | async;
 
 @let isNodeSelected = selectedNodes?.has(node());
+@let isNodeCut = cutNodes?.has(node());
 
 @let nodePreviewMiniUI = previewer() | async;
+@let hasParent = node().parent.value$ | async;
 
 <div
   class="tree-item"
   [class.active]="isNodeSelected && !childrenSelected"
+  [class.cut]="isNodeCut"
+  [class.child]="hasParent"
   (click)="selectNode(node())"
 >
+  @if (hasParent) {
+    <div class="sub-link"></div>
+  }
+
   @if (nodePreviewMiniUI) {
     <app-mini-ui [miniUi]="nodePreviewMiniUI" />
   } @else {
@@ -19,19 +28,29 @@
 
 @let childNodes = node().childNodes.value$ | async;
 
-<div
-  class="children-label"
-  [class.active]="isNodeSelected && childrenSelected"
-  (click)="selectNodeChildren()"
->
-  <div class="link"></div>
-  Children
-</div>
+@let canHaveChildren = node().config.getValue().options?.canHaveChildren;
 
-@if (childNodes?.length) {
-  <div class="children">
-    @for (childNode of childNodes; track childNode.id) {
-      <app-node-editor-tree-item [node]="childNode" [editor]="editor()" />
-    }
+@if (canHaveChildren || (node().childNodes.value$ | async)?.length) {
+  <div
+    class="children-label"
+    [class.active]="isNodeSelected && childrenSelected"
+    [class.cut]="isNodeCut"
+    (click)="selectNodeChildren()"
+  >
+    <app-icon
+      class="toggle-children-icon"
+      (click)="$event.stopPropagation(); toggleShowChildren()"
+      >{{ (node().showChildren.value$ | async) ? 'indeterminate_check_box' : 'add_box' }}</app-icon
+    >
+    <div class="link"></div>
+    Children
   </div>
+
+  @if (childNodes?.length && (node().showChildren.value$ | async)) {
+    <div class="children" [class.cut]="isNodeCut">
+      @for (childNode of childNodes; track childNode.id) {
+        <app-node-editor-tree-item [node]="childNode" [editor]="editor()" />
+      }
+    </div>
+  }
 }

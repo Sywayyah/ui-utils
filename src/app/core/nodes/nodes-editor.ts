@@ -1,7 +1,9 @@
 import { BehaviorSubject, map, Observable } from 'rxjs';
+import { MiniUI } from '../mini-ui/mini-ui';
 import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveMap } from '../reactive/reactive-map';
 import { ReactiveSet } from '../reactive/reactive-set';
+import { ReactiveValue } from '../reactive/reactive-value';
 import { assertValue } from '../utils/general';
 import { getEntries } from '../utils/objects';
 import { UINode, UINodeFlags } from './node';
@@ -9,8 +11,6 @@ import { UINodeConfig } from './node-config';
 import { InputContextInstance } from './node-input-context';
 import { SerializedUINodeInput } from './node-inputs';
 import { RootConfig } from './node-roots';
-import { ReactiveValue } from '../reactive/reactive-value';
-import { MiniUI } from '../mini-ui/mini-ui';
 
 export interface SerializedNode {
   readonly id: string;
@@ -18,6 +18,7 @@ export interface SerializedNode {
   readonly flags: number;
   readonly inputs: SerializedUINodeInput[];
   readonly children: SerializedNode[];
+  readonly showChildren: boolean;
 }
 
 export enum NodesEditorState {
@@ -69,6 +70,8 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
 
   readonly isChildrenSelected = new ReactiveValue(false);
   readonly selectedNodesSet = new ReactiveSet<UINode>();
+
+  readonly cutNodesSet = new ReactiveSet<UINode>();
 
   readonly selectedNodesState$ = this.selectedNodesSet.value$.pipe(
     map((nodesSet) => {
@@ -210,6 +213,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       flags: node.flags.getFlags(),
       inputs: serializedInputs,
       children: await this.serializeNodes(node.childNodes.getValue()),
+      showChildren: node.showChildren.getValue(),
     };
 
     return sNode;
@@ -280,6 +284,8 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       initInputs: false,
       flags: sNode.flags,
     });
+
+    node.showChildren.setValue(sNode.showChildren);
 
     await getEntries(configById.inputs).map(async ([inputName, inputOptions]) => {
       const sNodeInput = sNode.inputs.find((sInput) => sInput.name === inputName);

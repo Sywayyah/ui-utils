@@ -34,6 +34,7 @@
 </ng-template>
 
 @let selectedNodes = editor().selectedNodesSet.value$ | async;
+@let cutNodes = editor().cutNodesSet.value$ | async;
 
 @let root = activeNodeRoot();
 @let rootNodes = root?.nodes?.value$ | async;
@@ -53,8 +54,23 @@
     <button (click)="deleteSelectedNodes()"><app-icon>delete</app-icon>Delete</button>
     <button (click)="moveSelectedNode('up')"><app-icon>move_up</app-icon></button>
     <button (click)="moveSelectedNode('down')"><app-icon>move_down</app-icon></button>
+
+    <button (click)="cutNode()" title="Cut"><app-icon>content_cut</app-icon></button>
   }
 </div>
+
+@if (cutNodes?.size) {
+  <div class="cutting">
+    <span>Cutting {{ cutNodes.size }} Nodes</span>
+    <button (click)="cancelCut()" title="Cancel Cut"><app-icon>cancel</app-icon></button>
+
+    @if ((selectedNodes?.size ?? 0) <= 1) {
+      <button (click)="paste()" title="Paste">
+        <app-icon>content_paste</app-icon>
+      </button>
+    }
+  </div>
+}
 
 <div class="roots">
   @for (root of editor().nodeRoots.listenValues() | async; track root.rootName) {

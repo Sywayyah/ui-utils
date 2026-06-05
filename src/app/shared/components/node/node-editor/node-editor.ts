@@ -46,6 +46,66 @@ export class NodeEditor {
   readonly roots = fromObservableInput(() => this.editor().nodeRoots.value$, null);
   readonly activeNodeRoot = computed(() => this.roots()?.get(this.activeRoot()));
 
+  cutNode() {
+    const editor = this.editor();
+    editor.cutNodesSet.setValue(editor.selectedNodesSet.getValue());
+  }
+
+  cancelCut() {
+    this.editor().cutNodesSet.clear();
+  }
+
+  paste() {
+    const selectedNodes = this.editor().selectedNodesSet;
+
+    const cutNodesSet = this.editor().cutNodesSet;
+    const targetNode = selectedNodes.getItems().at(0);
+    const cutNodes = cutNodesSet.getItems();
+
+    if (selectedNodes.size > 1) {
+      console.error('Need only 1 node to be selected in order to paste cut nodes');
+      return;
+    }
+
+    if (!targetNode) {
+      cutNodes.forEach((node) => {
+        this.activeNodeRoot()?.nodes.push(node);
+        node.detachFromParent();
+      });
+
+      this.editor().cutNodesSet.clear();
+      return;
+    }
+
+    const pastingIntoCut = cutNodes.some((node) => selectedNodes.has(node));
+
+    if (pastingIntoCut) {
+      console.error('Cannot paste into a node being cut');
+
+      this.editor().cutNodesSet.clear();
+      return;
+    }
+
+    const isPastingParentIntoChild = cutNodes.some((node) => targetNode.isDeepChildOf(node));
+
+    if (isPastingParentIntoChild) {
+      console.error('Cannot paste into a child of a parent being cut');
+      return;
+    }
+
+    cutNodesSet.getItems().forEach((cutNode) => {
+      targetNode.addChildNode(cutNode);
+
+      this.editor()
+        .nodeRoots.getEntries()
+        .forEach(([name, list]) => {
+          list.nodes.remove(cutNode);
+        });
+    });
+
+    this.editor().cutNodesSet.clear();
+  }
+
   selectNode(node: UINode): void {
     const selectedNodesSet = this.editor().selectedNodesSet;
     this.editor().isChildrenSelected.setValue(false);
@@ -62,6 +122,7 @@ export class NodeEditor {
   setActiveRoot(root: NodesRoot) {
     this.activeRoot.set(root.rootName);
     this.editor().selectedNodesSet.clear();
+    this.editor().cutNodesSet.clear();
   }
 
   async addChildNode(root: NodesRoot | undefined, config: UINodeConfig) {

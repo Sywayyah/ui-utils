@@ -16,8 +16,19 @@
   }
 }
 
-.tray {
-  margin: 8px;
+.upper-tray,
+.tray,
+.cutting {
+  margin-bottom: 6px;
 }
 
+.tray {
+  margin-left: 8px;
+}
 
+.cutting {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 5px;
+}

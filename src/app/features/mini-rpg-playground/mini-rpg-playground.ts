@@ -129,7 +129,12 @@ const Building = createNodeConfig({
   },
 });
 
-const Folder = createNodeConfig({ id: 'folder', name: 'Folder', inputs: {} });
+const Folder = createNodeConfig({
+  id: 'folder',
+  name: 'Folder',
+  inputs: {},
+  options: { canHaveChildren: true },
+});
 
 const Spell = createNodeConfig({
   id: 'spell',
@@ -154,7 +159,7 @@ const Spell = createNodeConfig({
 })
 export class MiniRpgPlayground {
   readonly editor = new UINodesEditor({
-    configs: [Resource, ResourceCost, Building, Spell],
+    configs: [Resource, ResourceCost, Building, Spell, Folder],
     nodeRoots: {
       resources: { title: 'Resources', configs: [Folder, Resource] },
       units: { title: 'Units', configs: [Folder] },
