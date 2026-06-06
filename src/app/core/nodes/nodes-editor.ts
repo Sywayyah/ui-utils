@@ -177,6 +177,10 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
     return this.nodesMap.get(id);
   }
 
+  tryGetNodeById(id: string): UINode | null {
+    return this.nodesMap.getOr(id) ?? null;
+  }
+
   getNodesByConfigs<const C extends UINodeConfig[]>(...configs: C): UINode<C[number]>[] {
     const nodes = [
       ...configs.flatMap((config) => this.nodesByConfigsMap.getOr(config)?.getValue() ?? []),
