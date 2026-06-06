@@ -46,8 +46,13 @@ const nestedNodePropConfig = <const C extends UINodeConfig[]>(): ContextProperty
   NestedNodeRefValue<C>,
   SerializedNestedNodeRefValue
 > => ({
-  async deserialize({ editor, sVal }) {
-    return { node: await editor.deserializeNode(sVal.node) };
+  async deserialize({ editor, sVal, parentNode }) {
+    const node = await editor.deserializeNode(sVal.node);
+
+    // set parent, but do not list as child node
+    node.parent.setValue(parentNode);
+
+    return { node: node };
   },
   async serialize({ val, editor }) {
     return { node: await editor.serializeNode(val.node) };
@@ -77,6 +82,9 @@ export class NestedNodeEditingContext<
   override async createContext(params: { readonly parentNode: UINode }): Promise<T['context']> {
     const newNode = await UINode.createNew({ config: this.params.defaultConfig });
     newNode.flags.setFlag(UINodeFlags.Internal, true);
+
+    // set parent, but do not list as child node
+    newNode.parent.setValue(params.parentNode);
 
     return {
       prop: await ContextProperty.createNew({

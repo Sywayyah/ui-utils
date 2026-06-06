@@ -2,8 +2,8 @@ import { map, merge, Observable, switchMap } from 'rxjs';
 import { ReactiveFlags } from '../reactive/reactive-flags';
 import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveObjectTypedMap } from '../reactive/reactive-map';
+import { ReactiveSet } from '../reactive/reactive-set';
 import { ReactiveValue } from '../reactive/reactive-value';
-import { ReactiveWeakSet } from '../reactive/reactive-weak-set';
 import { assertValue } from '../utils/general';
 import { UINodeConfig } from './node-config';
 import { ContextProperty, InputContextInstance } from './node-input-context';
@@ -25,7 +25,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
   readonly childNodes = new ReactiveList<UINode<UINodeConfig>>();
   protected readonly inputsMap = new ReactiveObjectTypedMap<NodeInputsMap<T>>();
   readonly parent = new ReactiveValue<ParentNode>(null);
-  readonly referencedByPropertiesSet = new ReactiveWeakSet<ContextProperty<any, any>>();
+  readonly referencedByPropertiesSet = new ReactiveSet<ContextProperty<any, any>>();
   readonly flags = new ReactiveFlags<UINodeFlags>();
   readonly showChildren = new ReactiveValue(true);
 

@@ -25,3 +25,15 @@
     flex-shrink: 0;
   }
 }
+
+.refs {
+  overflow: auto;
+
+  .ref {
+    display: flex;
+
+    .separator {
+      padding: 0 4px;
+    }
+  }
+}

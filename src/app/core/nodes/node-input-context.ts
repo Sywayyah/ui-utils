@@ -11,7 +11,11 @@ export type SerializedContextProp<S> = { readonly id: string; readonly val: S };
 // todo: can become class to have identity
 export interface ContextPropertyConfig<V, S> {
   serialize(params: { readonly editor: UINodesEditor; readonly val: V }): Promise<S>;
-  deserialize(params: { readonly editor: UINodesEditor; readonly sVal: S }): Promise<V>;
+  deserialize(params: {
+    readonly editor: UINodesEditor;
+    readonly sVal: S;
+    readonly parentNode: UINode;
+  }): Promise<V>;
   // enables deferred prop initialization, e.g. based on some events, etc.
   onPropCreated?(params: {
     readonly prop: ContextProperty<V, S>;
@@ -66,7 +70,7 @@ export class ContextProperty<T, S = T> {
     readonly propConfig: ContextPropertyConfig<T, S>;
     readonly parentNode: UINode;
   }): Promise<ContextProperty<T, S>> {
-    const val = await propConfig.deserialize({ sVal: sProp.val, editor });
+    const val = await propConfig.deserialize({ sVal: sProp.val, editor, parentNode });
     const prop = new ContextProperty<T, S>(sProp.id, val, propConfig, parentNode);
     propConfig.onPropCreated?.({ prop, editor, sVal: sProp.val });
     propConfig.onValueSet?.({ prop, nextVal: val });

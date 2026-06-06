@@ -175,7 +175,7 @@ export class NodeEditor {
     const selectedNodes = this.editor().selectedNodesSet.getItems()[0];
 
     this.dialogOpener
-      .open(DeleteNodeDialog, { data: { node: selectedNodes } })
+      .open(DeleteNodeDialog, { data: { node: selectedNodes, editor: this.editor() } })
       .closed.subscribe((res) => {
         if (res?.delete) {
           this.editor().deleteNodes([selectedNodes]);

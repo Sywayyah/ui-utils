@@ -1,8 +1,45 @@
 <div class="title">Do you wish to delete a node?</div>
 
-<div class="content">
-  It is referenced {{ dialogData.node.referencedByPropertiesSet.size }} times
-</div>
+<app-mini-ui
+  [miniUi]="dialogData.editor.params.nodePreviewer?.(dialogData.node) | async"
+></app-mini-ui>
+
+@let refCount = dialogData.node.referencedByPropertiesSet.size;
+
+<div class="content">This node is referenced {{ refCount }} times</div>
+
+@if (refCount) {
+  <button (click)="showReferences.update(v => !v)">
+    {{ showReferences() ? 'Hide References' : 'Show References' }} ({{ refCount }})
+  </button>
+
+  @if (showReferences()) {
+    @let refs = dialogData.node.referencedByPropertiesSet.getItems();
+
+    <div class="refs">
+      @for (ref of refs; track $index) {
+        <div class="ref">
+          <ng-template #parent let-node="node" [typedTemplate]="ParentTemplate">
+            @let refParent = node.parent.getValue();
+            @if (refParent) {
+              <ng-container *ngTemplateOutlet="parent; context: { node: node.parent.getValue() }" />
+
+              <app-mini-ui [miniUi]="dialogData.editor.params.nodePreviewer?.(refParent) | async" />
+
+              <div class="separator">•</div>
+            }
+          </ng-template>
+
+          <ng-container *ngTemplateOutlet="parent; context: { node: ref.parentNode }" />
+
+          <app-mini-ui
+            [miniUi]="dialogData.editor.params.nodePreviewer?.(ref.parentNode) | async"
+          />
+        </div>
+      }
+    </div>
+  }
+}
 
 <div class="actions">
   <button (click)="close({ delete: true })"><app-icon>delete</app-icon> Delete</button>
