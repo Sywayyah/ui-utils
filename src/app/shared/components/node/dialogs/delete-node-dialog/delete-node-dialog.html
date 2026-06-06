@@ -41,8 +41,15 @@
   }
 }
 
+@if (refCount) {
+  <div>Please, remove all existing node usages before deleting a node</div>
+}
+
 <div class="actions">
-  <button (click)="close({ delete: true })"><app-icon>delete</app-icon> Delete</button>
+  <button (click)="close({ delete: true })">
+    <app-icon>delete</app-icon>
+    {{ refCount ? 'Delete Anyway' : 'Delete' }}
+  </button>
 
   <button (click)="close({ delete: false })"><app-icon>cancel</app-icon> Cancel</button>
 </div>

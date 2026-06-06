@@ -8,17 +8,17 @@ import {
   SerializedEditorState,
   UINodesEditor,
 } from '../../../../core/nodes/nodes-editor';
+import { injectDialogOpener } from '../../../../core/utils/dialogs';
 import { fromObservableInput } from '../../../../core/utils/effects';
 import { FileHandler } from '../../../../core/utils/file-system';
 import { Btn } from '../../btn/btn';
 import { Icon } from '../../icon/icon';
 import { LayoutPanels } from '../../layout/components/layout-panels/layout-panels';
 import { Panel } from '../../layout/core/panel';
+import { DeleteNodeDialog } from '../dialogs/delete-node-dialog/delete-node-dialog';
 import { NodeEditorTreeItem } from '../node-editor-tree-item/node-editor-tree-item';
 import { NodeInlineView } from '../node-inline-view/node-inline-view';
 import { Node } from '../node/node';
-import { injectDialogOpener } from '../../../../core/utils/dialogs';
-import { DeleteNodeDialog } from '../dialogs/delete-node-dialog/delete-node-dialog';
 
 @Component({
   selector: 'app-node-editor',
@@ -172,13 +172,13 @@ export class NodeEditor {
   deleteSelectedNodes(): void {
     // adjust later to work with multiple nodes
 
-    const selectedNodes = this.editor().selectedNodesSet.getItems()[0];
+    const selectedNode = this.editor().selectedNodesSet.getItems()[0];
 
     this.dialogOpener
-      .open(DeleteNodeDialog, { data: { node: selectedNodes, editor: this.editor() } })
+      .open(DeleteNodeDialog, { data: { node: selectedNode, editor: this.editor() } })
       .closed.subscribe((res) => {
         if (res?.delete) {
-          this.editor().deleteNodes([selectedNodes]);
+          this.editor().deleteNode(selectedNode);
         }
       });
   }
