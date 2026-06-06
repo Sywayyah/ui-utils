@@ -1,10 +1,18 @@
 import { Observable } from 'rxjs';
 import { UINode, UINodeFlags } from '../node';
 import { UINodeConfig } from '../node-config';
-import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
+import {
+  ContextProperty,
+  ContextPropertyConfig,
+  SerializedContextProp,
+} from '../node-input-context';
 import { UINodeInputsConfigMap } from '../node-inputs';
 import { SerializedNode, UINodesEditor } from '../nodes-editor';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextParams,
+} from './context-base';
 
 export interface NestedNodeConfig<C extends UINodeConfig[]> {
   readonly configs: C;
@@ -43,6 +51,7 @@ const nestedNodePropConfig = <const C extends UINodeConfig[]>(): ContextProperty
   async serialize({ val, editor }) {
     return { node: await editor.serializeNode(val.node) };
   },
+  // todo: Add destroy?
 });
 
 // can be used as simple inputs reusing
@@ -70,6 +79,7 @@ export class NestedNodeEditingContext<
       prop: await ContextProperty.createNew({
         initVal: { node: newNode },
         propConfig: nestedNodePropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -81,15 +91,13 @@ export class NestedNodeEditingContext<
     return { value: await params.context.prop.serialize({ editor: params.editor }) };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       prop: await ContextProperty.deserialize({
         editor: params.editor,
         propConfig: nestedNodePropConfig(),
         sProp: params.sVal.value,
+        parentNode: params.parentNode,
       }),
     };
   }

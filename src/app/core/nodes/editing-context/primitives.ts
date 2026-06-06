@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import { BaseEditingContext, EditingContextDeserializeParams, EditingContextParams } from './context-base';
 import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
 
 type InputType = 'text' | 'number' | 'checkbox';
@@ -54,6 +54,7 @@ export class PrimitiveEditingContext<
       prop: await ContextProperty.createNew({
         initVal: this.params.initVal,
         propConfig: createPlainValuePropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -64,15 +65,13 @@ export class PrimitiveEditingContext<
     return params.context.prop.serialize({ editor: params.editor });
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       prop: await ContextProperty.deserialize({
         sProp: params.sVal,
         propConfig: createPlainValuePropConfig<T['vType']>(),
         editor: params.editor,
+        parentNode: params.parentNode,
       }),
     };
   }

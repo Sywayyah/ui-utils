@@ -1,8 +1,12 @@
 import { Observable } from 'rxjs';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextParams } from './context-base';
-import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
+import { BaseEditingContext, EditingContextDeserializeParams, EditingContextParams } from './context-base';
+import {
+  ContextProperty,
+  ContextPropertyConfig,
+  SerializedContextProp,
+} from '../node-input-context';
 import { deserializeToFile, serializeFile } from '../../utils/files';
 
 export type ImageFileValue = {
@@ -85,6 +89,7 @@ export class ImageFileEditingContext<
       prop: await ContextProperty.createNew({
         initVal: { image: null },
         propConfig: imageFilePropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -96,15 +101,13 @@ export class ImageFileEditingContext<
     return { value: await params.context.prop.serialize({ editor: params.editor }) };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       prop: await ContextProperty.deserialize({
         editor: params.editor,
         propConfig: imageFilePropConfig(),
         sProp: params.sVal.value,
+        parentNode: params.parentNode
       }),
     };
   }

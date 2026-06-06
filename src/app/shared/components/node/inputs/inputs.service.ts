@@ -19,7 +19,7 @@ import {
   NestedNodeEditingComponent,
   NodeRefEditingComponent,
   NumRangeEditingComponent,
-  PrimitiveComponent,
+  PrimitiveEditingComponent,
 } from './input-components';
 import { ScriptEditingComponent } from './script-input.component';
 import { NumRangeEditingContext } from '../../../../core/nodes/editing-context/num-range';
@@ -32,7 +32,7 @@ export class InputsService {
   >();
 
   constructor() {
-    this.register(PrimitiveEditingContext, PrimitiveComponent);
+    this.register(PrimitiveEditingContext, PrimitiveEditingComponent);
     this.register(DropdownEditingContext, DropdownEditingComponent);
     this.register(NodeRefEditingContext, NodeRefEditingComponent);
     this.register(NestedNodeEditingContext, NestedNodeEditingComponent);

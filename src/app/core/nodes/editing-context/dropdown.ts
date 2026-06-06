@@ -1,10 +1,14 @@
 import { Observable } from 'rxjs';
 import { MiniUI } from '../../mini-ui/mini-ui';
 import { throwError } from '../../utils/general';
-import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
+import {
+  ContextProperty,
+  ContextPropertyConfig,
+  SerializedContextProp,
+} from '../node-input-context';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import { BaseEditingContext, EditingContextDeserializeParams, EditingContextParams } from './context-base';
 
 export interface DropdownParams<Item, Value> {
   readonly items: Item[];
@@ -63,6 +67,7 @@ export class DropdownEditingContext<
       prop: await ContextProperty.createNew({
         initVal: this.params.getDefaultValue?.(this.params.items) ?? this.params.items[0],
         propConfig: dropdownPropConfig(this.params),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -74,15 +79,13 @@ export class DropdownEditingContext<
     return { val: await params.context.prop.serialize({ editor: params.editor }) };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       prop: await ContextProperty.deserialize({
         editor: params.editor,
         propConfig: dropdownPropConfig(this.params),
         sProp: params.sVal.val,
+        parentNode: params.parentNode,
       }),
     };
   }

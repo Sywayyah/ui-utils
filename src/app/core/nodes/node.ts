@@ -6,7 +6,7 @@ import { ReactiveValue } from '../reactive/reactive-value';
 import { ReactiveWeakSet } from '../reactive/reactive-weak-set';
 import { assertValue } from '../utils/general';
 import { UINodeConfig } from './node-config';
-import { InputContextInstance } from './node-input-context';
+import { ContextProperty, InputContextInstance } from './node-input-context';
 import { NodeInputOptions, NodeInputsMap, UINodeInput, UINodeInputsConfigMap } from './node-inputs';
 import { UINodesEditor } from './nodes-editor';
 
@@ -25,7 +25,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
   readonly childNodes = new ReactiveList<UINode<UINodeConfig>>();
   protected readonly inputsMap = new ReactiveObjectTypedMap<NodeInputsMap<T>>();
   readonly parent = new ReactiveValue<ParentNode>(null);
-  readonly referencedByNodesSet = new ReactiveWeakSet<UINode<UINodeConfig>>();
+  readonly referencedByPropertiesSet = new ReactiveWeakSet<ContextProperty<any, any>>();
   readonly flags = new ReactiveFlags<UINodeFlags>();
   readonly showChildren = new ReactiveValue(true);
 
@@ -83,6 +83,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
   }
 
   // lifecycle
+
   destroy(params: { readonly editor: UINodesEditor }): void {
     this.inputsMap.getValues().forEach((nodeInput) => {
       nodeInput.list.getValue().forEach((context) => context.destroy());

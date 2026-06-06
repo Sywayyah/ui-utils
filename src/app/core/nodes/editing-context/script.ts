@@ -6,7 +6,11 @@ import {
   SerializedContextProp,
 } from '../node-input-context';
 import { UINodesEditor } from '../nodes-editor';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextParams,
+} from './context-base';
 
 interface ScriptEditingParams {
   readonly types: string;
@@ -51,10 +55,12 @@ export class ScriptEditingContext<
       script: await ContextProperty.createNew({
         initVal: initialScript,
         propConfig: scriptPropConfig(),
+        parentNode: params.parentNode,
       }),
       compiled: await ContextProperty.createNew({
         initVal: initialScript,
         propConfig: scriptPropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -69,20 +75,19 @@ export class ScriptEditingContext<
     };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       script: await ContextProperty.deserialize({
         sProp: params.sVal.script,
         propConfig: scriptPropConfig<T['vType']>(),
         editor: params.editor,
+        parentNode: params.parentNode,
       }),
       compiled: await ContextProperty.deserialize({
         sProp: params.sVal.compiled,
         propConfig: scriptPropConfig<T['vType']>(),
         editor: params.editor,
+        parentNode: params.parentNode,
       }),
     };
   }

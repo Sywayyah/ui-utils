@@ -1,16 +1,16 @@
 import { CdkListbox, CdkOption, ListboxValueChangeEvent } from '@angular/cdk/listbox';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, forwardRef, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NodePickerConfig } from '../../../../core/nodes/editing-context/node-ref';
-import { UINode } from '../../../../core/nodes/node';
-import { UINodesEditor } from '../../../../core/nodes/nodes-editor';
-import { BaseDialog } from '../../../../core/utils/dialogs';
-import { Btn } from '../../btn/btn';
-import { MiniUiComponent } from '../../mini-ui/mini-ui';
+import { NodePickerConfig } from '../../../../../core/nodes/editing-context/node-ref';
+import { UINode } from '../../../../../core/nodes/node';
+import { UINodesEditor } from '../../../../../core/nodes/nodes-editor';
+import { BaseDialog } from '../../../../../core/utils/dialogs';
+import { Btn } from '../../../btn/btn';
+import { MiniUiComponent } from '../../../mini-ui/mini-ui';
 
 @Component({
   selector: 'app-node-picker-dialog',
-  imports: [FormsModule, Btn, CdkListbox, CdkOption, MiniUiComponent],
+  imports: [FormsModule, Btn, CdkListbox, CdkOption, forwardRef(() => MiniUiComponent)],
   templateUrl: './node-picker-dialog.html',
   styleUrl: './node-picker-dialog.scss',
 })

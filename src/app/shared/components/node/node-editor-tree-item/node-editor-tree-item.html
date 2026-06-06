@@ -44,7 +44,7 @@
       >{{ (node().showChildren.value$ | async) ? 'indeterminate_check_box' : 'add_box' }}</app-icon
     >
     <div class="link"></div>
-    Items
+    Nodes ({{ (node().childNodes.value$ | async)?.length ?? 0 }})
   </div>
 
   @if (childNodes?.length && (node().showChildren.value$ | async)) {

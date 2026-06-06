@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 12px;
+  background: rgb(61, 61, 61);
+  border: 1px solid gray;
+  border-radius: 4px;
+  max-height: 80vh;
+  gap: 8px;
+  min-width: 300px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  .item {
+    flex-shrink: 0;
+  }
+}

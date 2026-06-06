@@ -22,6 +22,10 @@ import {
   NodeRefEditingContext,
 } from '../../../../core/nodes/editing-context/node-ref';
 import {
+  NumRangeContextParams,
+  NumRangeEditingContext,
+} from '../../../../core/nodes/editing-context/num-range';
+import {
   PrimitiveContextParams,
   PrimitiveEditingContext,
 } from '../../../../core/nodes/editing-context/primitives';
@@ -37,9 +41,8 @@ import { Btn } from '../../btn/btn';
 import { DropdownOptionComponent } from '../../dropdown/dropdown-option.component';
 import { DropdownComponent } from '../../dropdown/dropdown.component';
 import { MiniUiComponent } from '../../mini-ui/mini-ui';
+import { NodePickerDialog } from '../dialogs/node-picker-dialog/node-picker-dialog';
 import { NodeInputs } from '../node-inputs/node-inputs';
-import { NodePickerDialog } from '../node-picker-dialog/node-picker-dialog';
-import { NumRangeContextParams, NumRangeEditingContext } from '../../../../core/nodes/editing-context/num-range';
 
 @Component({
   template: 'Component is not recognized',
@@ -63,7 +66,7 @@ export class ContextBaseComponent<
   imports: [ReactiveValueBindDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PrimitiveComponent extends ContextBaseComponent<
+export class PrimitiveEditingComponent extends ContextBaseComponent<
   PrimitiveEditingContext<PrimitiveContextParams>
 > {}
 
@@ -127,7 +130,11 @@ export class NodeRefEditingComponent extends ContextBaseComponent<
         },
       })
       .closed.subscribe((v) => {
-        this.context().instance.prop.value.setValue({ node: v?.node ?? null });
+        const node = v?.node;
+        if (!node) {
+          return;
+        }
+        this.context().instance.prop.setValue({ node: v.node ?? null });
       });
   }
 }

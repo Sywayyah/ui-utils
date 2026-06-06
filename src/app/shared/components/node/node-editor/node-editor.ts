@@ -1,6 +1,6 @@
 import { CdkMenu, CdkMenuBar, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, input, model } from '@angular/core';
+import { Component, computed, HostListener, input, model } from '@angular/core';
 import { UINode } from '../../../../core/nodes/node';
 import { UINodeConfig } from '../../../../core/nodes/node-config';
 import {
@@ -17,6 +17,8 @@ import { Panel } from '../../layout/core/panel';
 import { NodeEditorTreeItem } from '../node-editor-tree-item/node-editor-tree-item';
 import { NodeInlineView } from '../node-inline-view/node-inline-view';
 import { Node } from '../node/node';
+import { injectDialogOpener } from '../../../../core/utils/dialogs';
+import { DeleteNodeDialog } from '../dialogs/delete-node-dialog/delete-node-dialog';
 
 @Component({
   selector: 'app-node-editor',
@@ -38,6 +40,7 @@ import { Node } from '../node/node';
   styleUrl: './node-editor.scss',
 })
 export class NodeEditor {
+  readonly dialogOpener = injectDialogOpener();
   readonly editor = input.required<UINodesEditor>();
   readonly activeRoot = model<string>('');
 
@@ -45,6 +48,11 @@ export class NodeEditor {
 
   readonly roots = fromObservableInput(() => this.editor().nodeRoots.value$, null);
   readonly activeNodeRoot = computed(() => this.roots()?.get(this.activeRoot()));
+
+  @HostListener('window:beforeunload')
+  unloadNotification() {
+    return false;
+  }
 
   cutNode() {
     const editor = this.editor();
@@ -162,8 +170,17 @@ export class NodeEditor {
   }
 
   deleteSelectedNodes(): void {
-    const selectedNodes = this.editor().selectedNodesSet.getItems();
-    this.editor().deleteNodes(selectedNodes);
+    // adjust later to work with multiple nodes
+
+    const selectedNodes = this.editor().selectedNodesSet.getItems()[0];
+
+    this.dialogOpener
+      .open(DeleteNodeDialog, { data: { node: selectedNodes } })
+      .closed.subscribe((res) => {
+        if (res?.delete) {
+          this.editor().deleteNodes([selectedNodes]);
+        }
+      });
   }
 
   log(): void {

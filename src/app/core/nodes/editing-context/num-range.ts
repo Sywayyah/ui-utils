@@ -1,7 +1,11 @@
 import { map, merge, Observable } from 'rxjs';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextParams,
+} from './context-base';
 import {
   ContextProperty,
   ContextPropertyConfig,
@@ -53,10 +57,12 @@ export class NumRangeEditingContext<T extends NumRangeContextParams> extends Bas
       min: await ContextProperty.createNew({
         initVal: this.params.initMin,
         propConfig: createNumRangePropConfig(),
+        parentNode: params.parentNode,
       }),
       max: await ContextProperty.createNew({
         initVal: this.params.initMin,
         propConfig: createNumRangePropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -71,20 +77,19 @@ export class NumRangeEditingContext<T extends NumRangeContextParams> extends Bas
     };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       min: await ContextProperty.deserialize({
         sProp: params.sVal.min,
         propConfig: createNumRangePropConfig(),
         editor: params.editor,
+        parentNode: params.parentNode,
       }),
       max: await ContextProperty.deserialize({
         sProp: params.sVal.max,
         propConfig: createNumRangePropConfig(),
         editor: params.editor,
+        parentNode: params.parentNode,
       }),
     };
   }

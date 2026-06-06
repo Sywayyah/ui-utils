@@ -18,8 +18,15 @@ export interface ContextPropertyConfig<V, S> {
     readonly editor: UINodesEditor;
     readonly sVal: S;
   }): void;
-  onValueSet?(params: { readonly prevVal?: V; readonly nextVal: V }): void;
-  onDestroyed?(params: { readonly value?: V }): void;
+  onValueSet?(params: {
+    readonly prevVal?: V;
+    readonly nextVal: V;
+    readonly prop: ContextProperty<V, S>;
+  }): void;
+  onDestroyed?(params: {
+    readonly value?: V;
+    readonly prop: ContextProperty<V, S>;
+  }): void;
 }
 
 export class ContextProperty<T, S = T> {
@@ -29,6 +36,7 @@ export class ContextProperty<T, S = T> {
     readonly id: string,
     initVal: T,
     protected readonly propConfig: ContextPropertyConfig<T, S>,
+    readonly parentNode: UINode,
   ) {
     this.value = new ReactiveValue<T>(initVal);
   }
@@ -36,11 +44,13 @@ export class ContextProperty<T, S = T> {
   static async createNew<T, S = T>(params: {
     readonly initVal: T;
     readonly propConfig: ContextPropertyConfig<T, S>;
+    readonly parentNode: UINode;
   }): Promise<ContextProperty<T, S>> {
     return new ContextProperty<T, S>(
       `input-${crypto.randomUUID()}`,
       params.initVal,
       params.propConfig,
+      params.parentNode,
     );
   }
 
@@ -48,13 +58,15 @@ export class ContextProperty<T, S = T> {
     sProp,
     propConfig,
     editor,
+    parentNode,
   }: {
     readonly editor: UINodesEditor;
     readonly sProp: SerializedContextProp<S>;
     readonly propConfig: ContextPropertyConfig<T, S>;
+    readonly parentNode: UINode;
   }): Promise<ContextProperty<T, S>> {
     const val = await propConfig.deserialize({ sVal: sProp.val, editor });
-    const prop = new ContextProperty<T, S>(sProp.id, val, propConfig);
+    const prop = new ContextProperty<T, S>(sProp.id, val, propConfig, parentNode);
     propConfig.onPropCreated?.({ prop, editor, sVal: sProp.val });
     return prop;
   }
@@ -73,6 +85,7 @@ export class ContextProperty<T, S = T> {
     this.propConfig.onValueSet?.({
       prevVal,
       nextVal: val,
+      prop: this,
     });
     this.value.setValue(val);
   }
@@ -82,7 +95,7 @@ export class ContextProperty<T, S = T> {
   }
 
   destroy(): void {
-    this.propConfig.onDestroyed?.({ value: this.getValue() });
+    this.propConfig.onDestroyed?.({ value: this.getValue(), prop: this });
   }
 }
 
@@ -150,14 +163,17 @@ export class InputContextInstance<const T extends NodeInputOptions<DefaultEditin
     inputConfig,
     serialized,
     editor,
+    parentNode,
   }: {
     readonly inputConfig: T;
     readonly serialized: SerializedContextInstance<T>;
     readonly editor: UINodesEditor;
+    readonly parentNode: UINode;
   }): Promise<InputContextInstance<T>> {
     const instance = await inputConfig.config.deserialize({
       editor,
       sVal: serialized.ctx,
+      parentNode,
     });
 
     const ctx = new InputContextInstance(inputConfig, instance, serialized.id);

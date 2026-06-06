@@ -16,6 +16,12 @@ export interface EditingContext<T extends EditingContextParams<DefaultEditingCon
   readonly __editingParam: T;
 }
 
+export interface EditingContextDeserializeParams<T extends EditingContextParams<DefaultEditingContextParams>> {
+  readonly editor: UINodesEditor;
+  readonly sVal: T['sType'];
+  readonly parentNode: UINode;
+}
+
 export abstract class BaseEditingContext<
   T extends EditingContextParams<DefaultEditingContextParams>,
 > implements EditingContext<T> {
@@ -31,10 +37,7 @@ export abstract class BaseEditingContext<
     readonly editor: UINodesEditor;
   }): Promise<T['sType']>;
 
-  abstract deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']>;
+  abstract deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']>;
 
   abstract value(params: { readonly context: T['context'] }): T['vType'];
 

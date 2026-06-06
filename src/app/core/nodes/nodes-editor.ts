@@ -287,7 +287,8 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
 
     node.showChildren.setValue(sNode.showChildren);
 
-    await getEntries(configById.inputs).map(async ([inputName, inputOptions]) => {
+    await Promise.all(
+      getEntries(configById.inputs).map(async ([inputName, inputOptions]) => {
       const sNodeInput = sNode.inputs.find((sInput) => sInput.name === inputName);
 
       if (!sNodeInput) {
@@ -309,6 +310,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
             editor: this,
             inputConfig: nodeInput.inputConfig,
             serialized: sContext,
+              parentNode: node,
           }),
         ),
       );
@@ -316,7 +318,8 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       deserializedContexts.forEach((instance) => {
         return nodeInput.list.push(instance);
       });
-    });
+      }),
+    );
 
     const childNodes = await this.deserializeNodes(sNode.children);
 

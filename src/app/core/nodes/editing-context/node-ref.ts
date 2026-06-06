@@ -1,9 +1,17 @@
 import { Observable } from 'rxjs';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextParams } from './context-base';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextParams,
+} from './context-base';
 import { MiniUI } from '../../mini-ui/mini-ui';
-import { ContextProperty, ContextPropertyConfig, SerializedContextProp } from '../node-input-context';
+import {
+  ContextProperty,
+  ContextPropertyConfig,
+  SerializedContextProp,
+} from '../node-input-context';
 
 // todo: can try to introduce genercis
 export interface NodePickerConfig {
@@ -30,10 +38,7 @@ export type NodePickerParams = EditingContextParams<{
   readonly params: NodePickerConfig;
 }>;
 
-const nodeRefPropConfig = (): ContextPropertyConfig<
-  NodeRefValue,
-  SerializedNodeRefValue
-> => ({
+const nodeRefPropConfig = (): ContextPropertyConfig<NodeRefValue, SerializedNodeRefValue> => ({
   async deserialize() {
     // let onPropCreated handle deferred initialization
     return { node: null };
@@ -48,6 +53,14 @@ const nodeRefPropConfig = (): ContextPropertyConfig<
       editor.onNodesLoadedListener(() => prop.value.setValue({ node: editor.getNodeById(nodeId) }));
     }
   },
+  onValueSet({ nextVal, prevVal, prop }): void {
+    prevVal?.node?.referencedByPropertiesSet.remove(prop);
+    nextVal?.node?.referencedByPropertiesSet.add(prop);
+  },
+  onDestroyed({ value, prop }): void {
+    value?.node?.referencedByPropertiesSet.remove(prop);
+  },
+  // todo: self-delete when referenced node is removed?
 });
 
 export class NodeRefEditingContext<const T extends NodePickerParams> extends BaseEditingContext<T> {
@@ -66,6 +79,7 @@ export class NodeRefEditingContext<const T extends NodePickerParams> extends Bas
       prop: await ContextProperty.createNew({
         initVal: { node: null },
         propConfig: nodeRefPropConfig(),
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -77,20 +91,22 @@ export class NodeRefEditingContext<const T extends NodePickerParams> extends Bas
     return { value: await params.context.prop.serialize({ editor: params.editor }) };
   }
 
-  override async deserialize(params: {
-    readonly editor: UINodesEditor;
-    readonly sVal: T['sType'];
-  }): Promise<T['context']> {
+  override async deserialize(params: EditingContextDeserializeParams<T>): Promise<T['context']> {
     return {
       prop: await ContextProperty.deserialize({
         editor: params.editor,
         propConfig: nodeRefPropConfig(),
         sProp: params.sVal.value,
+        parentNode: params.parentNode,
       }),
     };
   }
 
   override value(params: { readonly context: T['context'] }): T['vType'] {
     return params.context.prop.value.getValue();
+  }
+
+  override destroy(params: { readonly context: T['context'] }): void {
+    params.context.prop.destroy();
   }
 }
