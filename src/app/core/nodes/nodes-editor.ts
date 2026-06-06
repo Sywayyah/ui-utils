@@ -293,35 +293,35 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
 
     await Promise.all(
       getEntries(configById.inputs).map(async ([inputName, inputOptions]) => {
-      const sNodeInput = sNode.inputs.find((sInput) => sInput.name === inputName);
+        const sNodeInput = sNode.inputs.find((sInput) => sInput.name === inputName);
 
-      if (!sNodeInput) {
-        await node.addInputValue(inputName);
-        return;
-      }
+        if (!sNodeInput) {
+          await node.addInputValue(inputName);
+          return;
+        }
 
-      if (!sNodeInput.contexts.length && !inputOptions.multi) {
-        await node.addInputValue(inputName);
-        return;
-      }
+        if (!sNodeInput.contexts.length && !inputOptions.multi) {
+          await node.addInputValue(inputName);
+          return;
+        }
 
-      const nodeInput = node.getInputByName(inputName);
-      nodeInput.enabled.setValue(sNodeInput.enabled);
+        const nodeInput = node.getInputByName(inputName);
+        nodeInput.enabled.setValue(sNodeInput.enabled);
 
-      const deserializedContexts = await Promise.all(
-        sNodeInput.contexts.map((sContext) =>
-          InputContextInstance.deserialize({
-            editor: this,
-            inputConfig: nodeInput.inputConfig,
-            serialized: sContext,
+        const deserializedContexts = await Promise.all(
+          sNodeInput.contexts.map((sContext) =>
+            InputContextInstance.deserialize({
+              editor: this,
+              inputConfig: nodeInput.inputConfig,
+              serialized: sContext,
               parentNode: node,
-          }),
-        ),
-      );
+            }),
+          ),
+        );
 
-      deserializedContexts.forEach((instance) => {
-        return nodeInput.list.push(instance);
-      });
+        deserializedContexts.forEach((instance) => {
+          return nodeInput.list.push(instance);
+        });
       }),
     );
 
