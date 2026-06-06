@@ -1,17 +1,18 @@
 import { Observable } from 'rxjs';
-import { UINodesEditor } from '../nodes-editor';
-import { UINode } from '../node';
-import {
-  BaseEditingContext,
-  EditingContextDeserializeParams,
-  EditingContextParams,
-} from './context-base';
 import { MiniUI } from '../../mini-ui/mini-ui';
+import { UINode } from '../node';
 import {
   ContextProperty,
   ContextPropertyConfig,
   SerializedContextProp,
 } from '../node-input-context';
+import { UINodesEditor } from '../nodes-editor';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextDestroyParams,
+  EditingContextParams,
+} from './context-base';
 
 // todo: can try to introduce genercis
 export interface NodePickerConfig {
@@ -50,7 +51,7 @@ const nodeRefPropConfig = (): ContextPropertyConfig<NodeRefValue, SerializedNode
     const nodeId = sVal.nodeId;
 
     if (nodeId) {
-      editor.onNodesLoadedListener(() => prop.value.setValue({ node: editor.getNodeById(nodeId) }));
+      editor.onNodesLoadedListener(() => prop.setValue({ node: editor.getNodeById(nodeId) }));
     }
   },
   onValueSet({ nextVal, prevVal, prop }): void {
@@ -106,7 +107,7 @@ export class NodeRefEditingContext<const T extends NodePickerParams> extends Bas
     return params.context.prop.value.getValue();
   }
 
-  override destroy(params: { readonly context: T['context'] }): void {
-    params.context.prop.destroy();
+  override destroy(params: EditingContextDestroyParams<T>): void {
+    params.context.prop.destroy({ editor: params.editor });
   }
 }

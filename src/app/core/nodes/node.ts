@@ -86,7 +86,7 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
 
   destroy(params: { readonly editor: UINodesEditor }): void {
     this.inputsMap.getValues().forEach((nodeInput) => {
-      nodeInput.list.getValue().forEach((context) => context.destroy());
+      nodeInput.list.getValue().forEach((context) => context.destroy({ editor: params.editor }));
     });
   }
 
@@ -160,10 +160,14 @@ export class UINode<const T extends UINodeConfig = UINodeConfig> {
     nodeInput.list.push(context);
   }
 
-  deleteInputValueByIndex<const K extends keyof T['inputs']>(inputName: K, index: number): void {
+  deleteInputValueByIndex<const K extends keyof T['inputs']>(
+    inputName: K,
+    index: number,
+    editor: UINodesEditor,
+  ): void {
     const nodeInput = this.inputsMap.get(inputName);
     // todo: context teardown logic + custom teardown logic
-    nodeInput.list.at(index)?.destroy();
+    nodeInput.list.at(index)?.destroy({ editor });
     nodeInput.list.removeByIndex(index);
   }
 

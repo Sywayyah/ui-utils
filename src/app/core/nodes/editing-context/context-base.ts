@@ -16,10 +16,17 @@ export interface EditingContext<T extends EditingContextParams<DefaultEditingCon
   readonly __editingParam: T;
 }
 
-export interface EditingContextDeserializeParams<T extends EditingContextParams<DefaultEditingContextParams>> {
+export interface EditingContextDeserializeParams<
+  T extends EditingContextParams<DefaultEditingContextParams>,
+> {
   readonly editor: UINodesEditor;
   readonly sVal: T['sType'];
   readonly parentNode: UINode;
+}
+
+export interface EditingContextDestroyParams<T extends EditingContextParams<DefaultEditingContextParams>> {
+  readonly context: T['context'];
+  readonly editor: UINodesEditor;
 }
 
 export abstract class BaseEditingContext<
@@ -43,5 +50,5 @@ export abstract class BaseEditingContext<
 
   abstract changes(params: { readonly context: T['context'] }): Observable<unknown>;
 
-  destroy(params: { readonly context: T['context'] }): void {}
+  destroy(params: EditingContextDestroyParams<T>): void {}
 }

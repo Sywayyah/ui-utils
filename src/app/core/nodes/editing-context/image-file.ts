@@ -1,7 +1,12 @@
 import { Observable } from 'rxjs';
 import { UINodesEditor } from '../nodes-editor';
 import { UINode } from '../node';
-import { BaseEditingContext, EditingContextDeserializeParams, EditingContextParams } from './context-base';
+import {
+  BaseEditingContext,
+  EditingContextDeserializeParams,
+  EditingContextDestroyParams,
+  EditingContextParams,
+} from './context-base';
 import {
   ContextProperty,
   ContextPropertyConfig,
@@ -107,7 +112,7 @@ export class ImageFileEditingContext<
         editor: params.editor,
         propConfig: imageFilePropConfig(),
         sProp: params.sVal.value,
-        parentNode: params.parentNode
+        parentNode: params.parentNode,
       }),
     };
   }
@@ -116,7 +121,7 @@ export class ImageFileEditingContext<
     return params.context.prop.value.getValue();
   }
 
-  override destroy(params: { readonly context: T['context'] }): void {
-    params.context.prop.destroy();
+  override destroy(params: EditingContextDestroyParams<T>): void {
+    params.context.prop.destroy({ editor: params.editor });
   }
 }

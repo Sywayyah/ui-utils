@@ -11,6 +11,7 @@ import { SerializedNode, UINodesEditor } from '../nodes-editor';
 import {
   BaseEditingContext,
   EditingContextDeserializeParams,
+  EditingContextDestroyParams,
   EditingContextParams,
 } from './context-base';
 
@@ -51,7 +52,9 @@ const nestedNodePropConfig = <const C extends UINodeConfig[]>(): ContextProperty
   async serialize({ val, editor }) {
     return { node: await editor.serializeNode(val.node) };
   },
-  // todo: Add destroy?
+  onDestroyed({ value, editor }) {
+    value?.node.destroy({ editor });
+  },
 });
 
 // can be used as simple inputs reusing
@@ -110,5 +113,9 @@ export class NestedNodeEditingContext<
       values: node?.getInputValues(),
       node,
     } as T['vType'];
+  }
+
+  override destroy(params: EditingContextDestroyParams<T>): void {
+    params.context.prop.destroy({ editor: params.editor });
   }
 }

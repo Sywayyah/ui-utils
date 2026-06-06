@@ -49,7 +49,7 @@
             >
               @if (isMulti) {
                 <button cdkDragHandle><app-icon>drag_handle</app-icon></button>
-                <button (click)="node().deleteInputValueByIndex(input.inputName, $index)">
+                <button (click)="node().deleteInputValueByIndex(input.inputName, $index, editor())">
                   <app-icon>delete</app-icon>
                 </button>
                 @if (canDisable) {

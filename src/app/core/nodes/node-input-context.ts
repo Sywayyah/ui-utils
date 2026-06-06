@@ -26,6 +26,7 @@ export interface ContextPropertyConfig<V, S> {
   onDestroyed?(params: {
     readonly value?: V;
     readonly prop: ContextProperty<V, S>;
+    readonly editor: UINodesEditor;
   }): void;
 }
 
@@ -68,6 +69,7 @@ export class ContextProperty<T, S = T> {
     const val = await propConfig.deserialize({ sVal: sProp.val, editor });
     const prop = new ContextProperty<T, S>(sProp.id, val, propConfig, parentNode);
     propConfig.onPropCreated?.({ prop, editor, sVal: sProp.val });
+    propConfig.onValueSet?.({ prop, nextVal: val });
     return prop;
   }
 
@@ -94,8 +96,8 @@ export class ContextProperty<T, S = T> {
     return this.value.getValue();
   }
 
-  destroy(): void {
-    this.propConfig.onDestroyed?.({ value: this.getValue(), prop: this });
+  destroy(params: { readonly editor: UINodesEditor }): void {
+    this.propConfig.onDestroyed?.({ value: this.getValue(), prop: this, editor: params.editor });
   }
 }
 
@@ -183,10 +185,10 @@ export class InputContextInstance<const T extends NodeInputOptions<DefaultEditin
     return ctx;
   }
 
-  destroy(): void {
+  destroy(params: { readonly editor: UINodesEditor }): void {
     this.destroySubject$.next();
     this.destroySubject$.complete();
-    this.inputConfig.config.destroy({ context: this.instance });
+    this.inputConfig.config.destroy({ context: this.instance, editor: params.editor });
   }
 
   private addSource(source: Observable<unknown>): void {
