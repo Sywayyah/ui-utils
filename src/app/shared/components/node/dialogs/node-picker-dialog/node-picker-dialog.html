@@ -10,7 +10,7 @@
 <div class="items" cdkListbox #list="cdkListbox" (cdkListboxValueChange)="pickOption($event)">
   @for (item of finalItems(); track $index) {
     <button class="item" [cdkOption]="item.node" (click)="pickNode(item.node)">
-      <app-mini-ui [miniUi]="item.parts()" />
+      <app-mini-ui [miniUi]="item.parts" />
     </button>
   }
 </div>

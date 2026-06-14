@@ -1,12 +1,11 @@
 import { Observable } from 'rxjs';
-import { MiniUI } from '../../mini-ui/mini-ui';
 import { UINode } from '../node';
 import {
   ContextProperty,
   ContextPropertyConfig,
   SerializedContextProp,
 } from '../node-input-context';
-import { UINodesEditor } from '../nodes-editor';
+import { UINodePreview, UINodePreviewer, UINodesEditor } from '../nodes-editor';
 import {
   BaseEditingContext,
   EditingContextDeserializeParams,
@@ -18,11 +17,8 @@ import {
 export interface NodePickerConfig {
   readonly pickerTitle?: string;
   picker: (params: { readonly node: UINode; readonly editor: UINodesEditor }) => UINode<any>[];
-  nodeItemMapper(node: UINode): {
-    readonly text: string;
-    parts(): MiniUI;
-  };
-  resultParts: (node: NodeRefValue) => Observable<MiniUI>;
+  readonly nodeItemMapper?: UINodePreviewer;
+  readonly resultParts?: (node: NodeRefValue) => UINodePreview;
 }
 
 export type NodeRefValue = { readonly node: UINode | null };

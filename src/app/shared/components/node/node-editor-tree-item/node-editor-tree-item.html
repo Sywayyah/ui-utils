@@ -20,7 +20,7 @@
   }
 
   @if (nodePreviewMiniUI) {
-    <app-mini-ui [miniUi]="nodePreviewMiniUI" />
+    <app-mini-ui [miniUi]="nodePreviewMiniUI.parts" />
   } @else {
     {{ node().getConfigId() }}
   }

@@ -41,44 +41,6 @@ const ResourceCost = createNodeConfig({
       config: NodeRefEditingContext.create({
         pickerTitle: 'Select Resource',
         picker: ({ editor }) => editor.getNodesByConfig(Resource),
-        nodeItemMapper: (node) =>
-          new UINodeTypeSwitcher({
-            parts: () => miniUi.textLabel('Unknown Node'),
-            text: node.id,
-          })
-            .addCase(Resource, (n) => ({
-              parts: () =>
-                miniUi
-                  .flexRowHost()
-                  .addElem(
-                    new MiniUIImage({
-                      src: n.getInputValue('img').image?.objectUrl ?? 'no-img',
-                    }),
-
-                    { width: `20px`, height: `20px`, imageRendering: 'pixelated' },
-                  )
-                  .addElem(new MiniUIText(n.getInputValue('name'))),
-              text: n.getInputValue('name'),
-            }))
-            .switchNode(node),
-        resultParts: ({ node }) =>
-          new UINodeTypeSwitcher(of(miniUi.textLabel('Unknown Node')))
-            .addCase(Resource, (n) =>
-              n.listenInputsValues().pipe(
-                map((vals) =>
-                  miniUi
-                    .flexRowHost()
-                    .addElem(
-                      new MiniUIImage({
-                        src: vals.img.image?.objectUrl ?? 'no-img',
-                      }),
-                      { width: `20px`, height: `20px`, imageRendering: 'pixelated' },
-                    )
-                    .addElem(new MiniUIText(vals.name)),
-                ),
-              ),
-            )
-            .switchNode(node),
       }),
     },
     amount: {
@@ -190,24 +152,6 @@ const Unit = createNodeConfig({
         picker({ editor }) {
           return editor.getNodesByConfig(Spell);
         },
-        nodeItemMapper(node) {
-          return new UINodeTypeSwitcher({
-            parts: () => miniUi.textLabel('Unknown node'),
-            text: '',
-          })
-            .addCase(Spell, (n) => ({
-              parts: () => miniUi.textLabel('Spell - ' + n.getInputValue('name')),
-              text: '',
-            }))
-            .switchNode(node);
-        },
-        resultParts({ node }) {
-          return new UINodeTypeSwitcher(of(miniUi.textLabel('Unknown Node')))
-            .addCase(Spell, (n) =>
-              n.listenInputsValues().pipe(map((vals) => miniUi.textLabel(vals.name))),
-            )
-            .switchNode(node);
-        },
       }),
     },
   },
@@ -233,21 +177,47 @@ export class MiniRpgPlayground {
       },
     },
     nodePreviewer: (node) =>
-      new UINodeTypeSwitcher(of(miniUi.textLabel(node.getConfigName())))
-        .addCase(Resource, (n) =>
-          n.listenInputsValues().pipe(
-            map((values) =>
-              miniUi
-                .flexRowHost()
-                .addElem(new MiniUIText('Resource - '))
-                .addElem(new MiniUIImage({ src: values.img.image?.objectUrl ?? '' }), {
-                  width: '25px',
-                  height: '25px',
-                })
-                .addElem(new MiniUIText(values.name || 'Unnamed')),
-            ),
-          ),
-        )
+      new UINodeTypeSwitcher({
+        parts: miniUi.textLabel(node?.getConfigName() ?? 'No Value'),
+        text: '',
+      })
+        .addCase(Spell, (n) => ({
+          parts: miniUi.flexRowHost().addElem(new MiniUIText('Spell - ' + n.getInputValue('name'))),
+          text: 'Spell ' + n.getInputValue('name'),
+        }))
+        .addCase(Building, (n) => ({
+          parts: miniUi
+            .flexRowHost()
+            .addElem(new MiniUIText('Building - '))
+            .addElem(new MiniUIImage({ src: n.getInputValue('img').image?.objectUrl ?? '' }), {
+              width: '25px',
+              height: '25px',
+            })
+            .addElem(new MiniUIText(n.getInputValue('name'))),
+          text: 'Building ' + n.getInputValue('name'),
+        }))
+        .addCase(Unit, (n) => ({
+          parts: miniUi
+            .flexRowHost()
+            .addElem(new MiniUIText('Unit - '))
+            .addElem(new MiniUIImage({ src: n.getInputValue('img').image?.objectUrl ?? '' }), {
+              width: '25px',
+              height: '25px',
+            })
+            .addElem(new MiniUIText(n.getInputValue('name'))),
+          text: 'Unit ' + n.getInputValue('name'),
+        }))
+        .addCase(Resource, (n) => ({
+          text: 'Resource ' + n.getInputValue('name'),
+          parts: miniUi
+            .flexRowHost()
+            .addElem(new MiniUIText('Resource - '))
+            .addElem(new MiniUIImage({ src: n.getInputValue('img').image?.objectUrl ?? '' }), {
+              width: '25px',
+              height: '25px',
+            })
+            .addElem(new MiniUIText(n.getInputValue('name') || 'Unnamed')),
+        }))
         .switchNode(node),
   });
 }

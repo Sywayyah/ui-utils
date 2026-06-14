@@ -105,10 +105,13 @@ export class DropdownEditingComponent extends ContextBaseComponent<
 @Component({
   template: `
     @let params = inputParams();
+    @let val = context().instance.prop.value.value$ | async;
 
     <button (click)="openPickerDialog()">
       <app-mini-ui
-        [miniUi]="params.resultParts((context().instance.prop.value.value$ | async)!) | async"
+        [miniUi]="
+          params.nodeItemMapper?.(val?.node)?.parts ?? editor().nodePreviewer(val?.node).parts
+        "
       />
     </button>
   `,

@@ -1,5 +1,5 @@
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { MiniUI } from '../mini-ui/mini-ui';
+import { BehaviorSubject, map } from 'rxjs';
+import { miniUi, MiniUI } from '../mini-ui/mini-ui';
 import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveMap } from '../reactive/reactive-map';
 import { ReactiveSet } from '../reactive/reactive-set';
@@ -45,6 +45,11 @@ export interface NodesRoot {
   readonly rootConfig?: RootConfig;
 }
 
+export interface UINodePreview {
+  readonly parts: MiniUI;
+  readonly text?: string;
+}
+
 export type NodesEditorParams = {
   readonly configs: UINodeConfig[];
   readonly nodeRoots?: Record<
@@ -55,7 +60,24 @@ export type NodesEditorParams = {
       readonly rootConfig?: RootConfig;
     }
   >;
-  readonly nodePreviewer?: (node: UINode) => Observable<MiniUI>;
+  readonly nodePreviewer?: UINodePreviewer;
+};
+
+export type UINodePreviewer = (node?: UINode | null) => UINodePreview;
+
+export const getDefaultNodePreview: UINodePreviewer = (node) => {
+  if (!node)
+    return {
+      parts: miniUi.textLabel('No Value'),
+      text: '',
+    };
+
+  const defaultNodeValue = node.getConfigId() + ' ' + node.getConfigName() + ' ' + node.id;
+
+  return {
+    parts: miniUi.textLabel(defaultNodeValue),
+    text: defaultNodeValue,
+  };
 };
 
 // todo: flush current state when opening new file
@@ -93,10 +115,14 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
 
   private readonly state = new BehaviorSubject<NodesEditorState>(NodesEditorState.Normal);
 
+  readonly nodePreviewer: UINodePreviewer;
+
   constructor(readonly params: T) {
     params.configs.forEach((config) => this.registerConfig(config));
 
     const nodeRoots = params.nodeRoots;
+
+    this.nodePreviewer = params.nodePreviewer ?? getDefaultNodePreview;
 
     if (nodeRoots) {
       Object.entries(nodeRoots).forEach(([rootName, config]) => {

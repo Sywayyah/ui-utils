@@ -3,7 +3,7 @@ import { Component, computed, forwardRef, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NodePickerConfig } from '../../../../../core/nodes/editing-context/node-ref';
 import { UINode } from '../../../../../core/nodes/node';
-import { UINodesEditor } from '../../../../../core/nodes/nodes-editor';
+import { getDefaultNodePreview, UINodesEditor } from '../../../../../core/nodes/nodes-editor';
 import { BaseDialog } from '../../../../../core/utils/dialogs';
 import { Btn } from '../../../btn/btn';
 import { MiniUiComponent } from '../../../mini-ui/mini-ui';
@@ -30,7 +30,9 @@ export class NodePickerDialog extends BaseDialog<
   });
 
   readonly mappedItems = this.nodes.map((node) => ({
-    ...this.dialogData.nodePickerParams.nodeItemMapper(node),
+    ...(this.dialogData.nodePickerParams.nodeItemMapper?.(node) ??
+      this.dialogData.editor.params.nodePreviewer?.(node) ??
+      getDefaultNodePreview(node)),
     node,
   }));
 
@@ -38,7 +40,7 @@ export class NodePickerDialog extends BaseDialog<
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return this.mappedItems;
 
-    return this.mappedItems.filter((item) => item.text.toLowerCase().includes(term));
+    return this.mappedItems.filter((item) => item.text?.toLowerCase().includes(term));
   });
 
   pickOption(event: ListboxValueChangeEvent<unknown>): void {

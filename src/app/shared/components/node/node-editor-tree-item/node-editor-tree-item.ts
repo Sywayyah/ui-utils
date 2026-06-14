@@ -4,6 +4,7 @@ import { UINode } from '../../../../core/nodes/node';
 import { UINodesEditor } from '../../../../core/nodes/nodes-editor';
 import { MiniUiComponent } from '../../mini-ui/mini-ui';
 import { Icon } from '../../icon/icon';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-node-editor-tree-item',
@@ -14,7 +15,11 @@ import { Icon } from '../../icon/icon';
 export class NodeEditorTreeItem {
   readonly node = input.required<UINode>();
   readonly editor = input.required<UINodesEditor>();
-  readonly previewer = computed(() => this.editor().params.nodePreviewer?.(this.node()));
+  readonly previewer = computed(() =>
+    this.node()
+      .listenInputsValues()
+      .pipe(map(() => this.editor().nodePreviewer(this.node()))),
+  );
 
   toggleShowChildren(): void {
     this.node().showChildren.update((v) => !v);

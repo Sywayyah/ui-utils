@@ -1,8 +1,6 @@
 <div class="title">Do you wish to delete a node?</div>
 
-<app-mini-ui
-  [miniUi]="dialogData.editor.params.nodePreviewer?.(dialogData.node) | async"
-></app-mini-ui>
+<app-mini-ui [miniUi]="dialogData.editor.nodePreviewer(dialogData.node).parts"></app-mini-ui>
 
 @let refCount = dialogData.node.referencedByPropertiesSet.size;
 
@@ -24,7 +22,7 @@
             @if (refParent) {
               <ng-container *ngTemplateOutlet="parent; context: { node: node.parent.getValue() }" />
 
-              <app-mini-ui [miniUi]="dialogData.editor.params.nodePreviewer?.(refParent) | async" />
+              <app-mini-ui [miniUi]="dialogData.editor.nodePreviewer(refParent).parts" />
 
               <div class="separator">•</div>
             }
@@ -32,9 +30,7 @@
 
           <ng-container *ngTemplateOutlet="parent; context: { node: ref.parentNode }" />
 
-          <app-mini-ui
-            [miniUi]="dialogData.editor.params.nodePreviewer?.(ref.parentNode) | async"
-          />
+          <app-mini-ui [miniUi]="dialogData.editor.nodePreviewer(ref.parentNode).parts" />
         </div>
       }
     </div>

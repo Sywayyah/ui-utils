@@ -92,33 +92,13 @@ export const AnotherNode = createNodeConfig({
         picker: ({ editor }) => editor.getNodesByConfig(BasicNode),
         // todo: in future can try to create util on top of this implementation to hide some implementation details
         nodeItemMapper: (node) => ({
-          parts: () => {
-            const switcher = new UINodeTypeSwitcher(
-              miniUi.textLabel(`Unknown node, ${node.getConfigId()}`),
-            );
-
-            switcher.addCase(BasicNode, (n) => {
+          parts: new UINodeTypeSwitcher(miniUi.textLabel(`Unknown node, ${node?.getConfigId()}`))
+            .addCase(BasicNode, (n) => {
               return miniUi.textLabel(`Basic Node: ${n.getInputValue('name')}`);
-            });
-
-            return switcher.switchNode(node);
-          },
-          text: node.id,
-        }),
-        resultParts: ({ node }) =>
-          new UINodeTypeSwitcher(of(miniUi.textLabel('Unknown Node')))
-            .addCase(BasicNode, (n) =>
-              n
-                .listenInputsValues()
-                .pipe(
-                  map((inputValues) =>
-                    miniUi.textLabel(
-                      `Items ${inputValues.name}: Gold ${inputValues.gold.length}, total: ${inputValues.gold.reduce((acc, next) => acc + next, 0)}`,
-                    ),
-                  ),
-                ),
-            )
+            })
             .switchNode(node),
+          text: node?.id,
+        }),
       }),
 
       uiParts: () => miniUi.textLabel('Node Picker'),
