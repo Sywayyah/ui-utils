@@ -15,6 +15,7 @@ export class FileHandler<T> {
     const [handler] = await window.showOpenFilePicker({
       types: this.defaultFileTypes,
     });
+
     const file = await handler.getFile();
     this.fileData.setValue({ file, handler });
     const content = await file.text();

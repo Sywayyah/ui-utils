@@ -217,7 +217,8 @@ export class NodeEditor {
       return;
     }
 
+    const loadedData = await this.fsHandler.loadFromFile();
     await this.editor().flushState();
-    await this.editor().deserialize(await this.fsHandler.loadFromFile());
+    await this.editor().deserialize(loadedData);
   }
 }
