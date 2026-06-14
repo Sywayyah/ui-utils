@@ -166,6 +166,53 @@ const Spell = createNodeConfig({
   },
 });
 
+const Unit = createNodeConfig({
+  id: 'unit',
+  name: 'Unit',
+  inputs: {
+    name: {
+      config: PrimitiveEditingContext.createText({ initVal: '' }),
+      uiParts: () => miniUi.textLabel('Name'),
+    },
+    img: {
+      config: ImageFileEditingContext.create(),
+      uiParts: () => miniUi.textLabel('Image'),
+    },
+    cost: {
+      config: NestedNodeEditingContext.create([ResourceCost], ResourceCost),
+      uiParts: () => miniUi.textLabel('Resources Cost'),
+      multi: true,
+    },
+    spells: {
+      uiParts: () => miniUi.textLabel('Spells'),
+      multi: true,
+      config: NodeRefEditingContext.create({
+        picker({ editor }) {
+          return editor.getNodesByConfig(Spell);
+        },
+        nodeItemMapper(node) {
+          return new UINodeTypeSwitcher({
+            parts: () => miniUi.textLabel('Unknown node'),
+            text: '',
+          })
+            .addCase(Spell, (n) => ({
+              parts: () => miniUi.textLabel('Spell - ' + n.getInputValue('name')),
+              text: '',
+            }))
+            .switchNode(node);
+        },
+        resultParts({ node }) {
+          return new UINodeTypeSwitcher(of(miniUi.textLabel('Unknown Node')))
+            .addCase(Spell, (n) =>
+              n.listenInputsValues().pipe(map((vals) => miniUi.textLabel(vals.name))),
+            )
+            .switchNode(node);
+        },
+      }),
+    },
+  },
+});
+
 @Component({
   selector: 'app-mini-rpg-playground',
   imports: [NodeEditor, Btn],
@@ -174,10 +221,10 @@ const Spell = createNodeConfig({
 })
 export class MiniRpgPlayground {
   readonly editor = new UINodesEditor({
-    configs: [Resource, ResourceCost, Building, Spell, Folder],
+    configs: [Resource, ResourceCost, Building, Spell, Folder, Unit],
     nodeRoots: {
       resources: { title: 'Resources', configs: [Folder, Resource] },
-      units: { title: 'Units', configs: [Folder] },
+      units: { title: 'Units', configs: [Folder, Unit] },
       buildings: { title: 'Buildings', configs: [Folder, Building] },
 
       spells: {
