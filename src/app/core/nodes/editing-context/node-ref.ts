@@ -56,7 +56,7 @@ const nodeRefPropConfig = (): ContextPropertyConfig<NodeRefValue, SerializedNode
 
         if (!node) {
           console.warn(
-            `Couldn't find node by id ${nodeId} while deserializing Node Ref editing context`,
+            `Couldn't find node by id ${nodeId} while deserializing Node Ref editing context for node ${prop.parentNode.id} of type ${prop.parentNode.getConfigId()}`,
           );
         }
 
