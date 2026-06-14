@@ -51,15 +51,17 @@ const nodeRefPropConfig = (): ContextPropertyConfig<NodeRefValue, SerializedNode
     const nodeId = sVal.nodeId;
 
     if (nodeId) {
-      const node = editor.tryGetNodeById(nodeId);
+      editor.onNodesLoadedListener(() => {
+        const node = editor.tryGetNodeById(nodeId);
 
-      if (!node) {
-        console.warn(
-          `Couldn't find node by id ${nodeId} while deserializing Node Ref editing context`,
-        );
-      }
+        if (!node) {
+          console.warn(
+            `Couldn't find node by id ${nodeId} while deserializing Node Ref editing context`,
+          );
+        }
 
-      editor.onNodesLoadedListener(() => prop.setValue({ node: node }));
+        prop.setValue({ node: node });
+      });
     }
   },
   onValueSet({ nextVal, prevVal, prop }): void {
