@@ -4,7 +4,7 @@ import { ReactiveList } from '../reactive/reactive-list';
 import { ReactiveMap } from '../reactive/reactive-map';
 import { ReactiveSet } from '../reactive/reactive-set';
 import { ReactiveValue } from '../reactive/reactive-value';
-import { assertValue } from '../utils/general';
+import { assertValue, throwError } from '../utils/general';
 import { getEntries } from '../utils/objects';
 import { UINode, UINodeFlags } from './node';
 import { UINodeConfig } from './node-config';
@@ -153,6 +153,14 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
   }
 
   private registerConfig(config: UINodeConfig): void {
+    const configById = this.configsMap.get(config.id);
+    if (configById && configById !== config) {
+      throwError('Another config is registered for ' + config.id, {
+        registering: config,
+        registered: configById,
+      });
+    }
+
     this.configsMap.set(config.id, config);
   }
 
