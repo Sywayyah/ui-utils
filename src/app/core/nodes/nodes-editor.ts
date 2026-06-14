@@ -24,6 +24,7 @@ export interface SerializedNode {
 export enum NodesEditorState {
   LoadingNodes,
   Normal,
+  Flushing,
 }
 
 const defaultNodeRoot = 'default';
@@ -194,6 +195,30 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       console.warn(`Attempting to wait for editor to load nodes while nodes aren't loading`);
     }
     this.onNodesLoadedListeners.push(listener);
+  }
+
+  hasAnyNodes(): boolean {
+    return this.nodes.size > 0;
+  }
+
+  /**
+   * Removes & destroys all existing nodes
+   */
+  async flushState(): Promise<void> {
+    this.state.next(NodesEditorState.Flushing);
+    this.nodes.getItems().forEach((node) => node.destroy({ editor: this }));
+    this.nodes.clear();
+    this.nodesMap.clear();
+    this.nodesByConfigsMap.getValues().forEach((list) => list.clear());
+    this.nodeRoots.getValues().forEach((root) => root.nodes.clear());
+
+    this.onNodesLoadedListeners = [];
+
+    this.selectedNodesSet.clear();
+    this.cutNodesSet.clear();
+    this.isChildrenSelected.setValue(false);
+
+    this.state.next(NodesEditorState.Normal);
   }
 
   async serializeNode(node: UINode): Promise<SerializedNode> {

@@ -192,7 +192,28 @@ export class NodeEditor {
     this.fsHandler.save(await this.editor().serialize());
   }
 
+  async createNew() {
+    const result = this.editor().hasAnyNodes()
+      ? confirm('Do you wish to create new project?')
+      : true;
+
+    if (!result) {
+      return;
+    }
+
+    await this.editor().flushState();
+  }
+
   async load() {
+    const result = this.editor().hasAnyNodes()
+      ? confirm('Do you wish to open another project?')
+      : true;
+
+    if (!result) {
+      return;
+    }
+
+    await this.editor().flushState();
     await this.editor().deserialize(await this.fsHandler.loadFromFile());
   }
 }

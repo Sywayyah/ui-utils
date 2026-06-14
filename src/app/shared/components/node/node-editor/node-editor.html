@@ -5,14 +5,19 @@
 
 <ng-template #fileMenu>
   <div class="menu" cdkMenu>
-    <button (click)="save()" cdkMenuItem>
-      <app-icon>save</app-icon>
-      Save
+    <button cdkMenuItem (click)="createNew()">
+      <app-icon>add</app-icon>
+      New
     </button>
 
     <button (click)="load()" cdkMenuItem>
       <app-icon>open_in_browser</app-icon>
       Load
+    </button>
+
+    <button (click)="save()" cdkMenuItem>
+      <app-icon>save</app-icon>
+      Save As
     </button>
 
     <hr />
