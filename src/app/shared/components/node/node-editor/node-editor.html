@@ -1,7 +1,7 @@
 <div class="upper-tray" cdkMenuBar>
   <div class="buttons">
-    <button cdkMenuItem [cdkMenuTriggerFor]="fileMenu">File</button>
-    <button cdkMenuItem [cdkMenuTriggerFor]="utilsMenu">Utils</button>
+    <button class="even" cdkMenuItem [cdkMenuTriggerFor]="fileMenu">File</button>
+    <button class="even" cdkMenuItem [cdkMenuTriggerFor]="utilsMenu">Utils</button>
   </div>
 
   <div class="file-header">
@@ -11,6 +11,10 @@
       @if (fileData) {
         <app-icon>file_open</app-icon>
         {{ fileData.file.name }}
+
+        <button class="even" title="Click to save changes" (click)="$event.stopPropagation(); saveCurrentFile()">
+          <app-icon>save</app-icon>
+        </button>
       } @else {
         <app-icon>new_window</app-icon>
         New Project
