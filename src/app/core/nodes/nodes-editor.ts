@@ -94,7 +94,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
   private readonly state = new BehaviorSubject<NodesEditorState>(NodesEditorState.Normal);
 
   constructor(readonly params: T) {
-    params.configs.forEach((config) => this.configsMap.set(config.id, config));
+    params.configs.forEach((config) => this.registerConfig(config));
 
     const nodeRoots = params.nodeRoots;
 
@@ -107,6 +107,7 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
           nodeConfigs: config.configs,
           rootConfig: config.rootConfig,
         });
+        config.configs?.forEach((config) => this.registerConfig(config));
       });
     } else {
       console.warn(`No nodeRoots were provided, creating 'default' root`);
@@ -149,6 +150,10 @@ export class UINodesEditor<const T extends NodesEditorParams = NodesEditorParams
       const rootWithItem = this.nodeRoots.getValues().find((root) => root.nodes.includes(item));
       rootWithItem?.nodes.moveItem(item, offset);
     }
+  }
+
+  private registerConfig(config: UINodeConfig): void {
+    this.configsMap.set(config.id, config);
   }
 
   private registerNode(node: UINode): void {
