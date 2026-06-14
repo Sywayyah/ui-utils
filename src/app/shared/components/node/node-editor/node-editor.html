@@ -1,6 +1,24 @@
 <div class="upper-tray" cdkMenuBar>
-  <button cdkMenuItem [cdkMenuTriggerFor]="fileMenu">File</button>
-  <button cdkMenuItem [cdkMenuTriggerFor]="utilsMenu">Utils</button>
+  <div class="buttons">
+    <button cdkMenuItem [cdkMenuTriggerFor]="fileMenu">File</button>
+    <button cdkMenuItem [cdkMenuTriggerFor]="utilsMenu">Utils</button>
+  </div>
+
+  <div class="file-header">
+    @let fileData = fsHandler.fileData.value$ | async;
+
+    <div class="file" (click)="load()" title="Click to open another project">
+      @if (fileData) {
+        <app-icon>file_open</app-icon>
+        {{ fileData.file.name }}
+      } @else {
+        <app-icon>new_window</app-icon>
+        New Project
+      }
+    </div>
+  </div>
+
+  <div class="icons"></div>
 </div>
 
 <ng-template #fileMenu>
@@ -13,6 +31,11 @@
     <button (click)="load()" cdkMenuItem>
       <app-icon>open_in_browser</app-icon>
       Load
+    </button>
+
+    <button (click)="saveCurrentFile()">
+      <app-icon>save</app-icon>
+      Save
     </button>
 
     <button (click)="save()" cdkMenuItem>

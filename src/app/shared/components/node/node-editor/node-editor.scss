@@ -16,6 +16,46 @@
   }
 }
 
+.upper-tray {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+
+  .buttons {
+    display: flex;
+    gap: 4px;
+  }
+
+  .buttons, .file-header, .icons {
+    flex: 1 1;
+  }
+
+  .file-header {
+    display: flex;
+    justify-content: center;
+
+    .file {
+      display: flex;
+      padding:  4px;
+      border: 1px solid rgba(128, 128, 128, 0.199);
+      border-radius: 6px;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      min-width: 200px;
+      justify-content: center;
+      cursor: pointer;
+      &:hover {
+        background: rgba(128, 128, 128, 0.192);
+      }
+
+      app-icon {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
 .upper-tray,
 .tray,
 .cutting {

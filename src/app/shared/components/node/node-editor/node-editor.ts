@@ -189,6 +189,10 @@ export class NodeEditor {
   }
 
   async save() {
+    this.fsHandler.saveAs(await this.editor().serialize());
+  }
+
+  async saveCurrentFile() {
     this.fsHandler.save(await this.editor().serialize());
   }
 
