@@ -1,3 +1,6 @@
+import { getRandomInt } from './common';
+import { throwError } from './general';
+
 export function splitChunks<T>(array: T[], chunkSize: number): T[][] {
   const chunks: T[][] = [];
   for (let i = 0; i < array.length; i += chunkSize) {
@@ -89,4 +92,10 @@ export function groupByMap<T, R>(arr: T[], mapperFn: (item: T) => R): Map<R, T[]
     }
     return map;
   }, new Map<R, T[]>());
+}
+
+export function getRandomItem<T>(arr: T[]): T {
+  if (!arr.length) throwError('Selecting random item from empty array');
+
+  return arr[getRandomInt(0, arr.length - 1)];
 }
