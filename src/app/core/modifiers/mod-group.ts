@@ -5,36 +5,17 @@ import { ReactiveSet } from '../reactive/reactive-set';
 import { ReactiveValue } from '../reactive/reactive-value';
 import { getEntries, isNotNullish } from '../utils/objects';
 
-// debugging symbol?
 type ModsObject = object;
 
-// todo: think if it's needed
-// registry with mod refs?
-
-// recommendations:
-// 1. use numbers (1, 0) instead of flags, numbers can be added/removed to each other
-//  this way, if entity has certain 'statuses' upon itself, like 'silenced', it will also be possible
-//  to easily calculate the amount of such statuses
-// 2. for functions it's probably better to provide objects with method, this way it should be possible
-//  to avoid using closures, which potentially can help with serialization and memory usage
-
-// can be extended with some T provided
 export class ModGroup<T extends Partial<ModsObject>> {
-  // todo: would it be better to have a map? where modrefs can be associated with anything
-  // and later infered using some key as identity
   private readonly mods = new ReactiveList<T>();
 
   private readonly modsByKeysMap = new ReactiveMap<unknown, ReactiveList<T>>();
   private readonly namedParentModGroupsMap = new ReactiveMap<string, ModGroup<T>>();
-  // sets? add checks if present/absent ?
   private readonly parentModGroups = new ReactiveSet<ModGroup<T>>();
   private readonly childModGroups = new ReactiveSet<ModGroup<T>>();
 
   private readonly combinedValues = new ReactiveValue<Partial<T>>({});
-
-  // todo: add dynamic recalculation with parent interactions
-  //  reactivity
-  //  and unit tests
 
   listen(): Observable<Partial<T>> {
     return this.combinedValues.listen();
@@ -45,6 +26,10 @@ export class ModGroup<T extends Partial<ModsObject>> {
       ...this.parentModGroups.getItems().flatMap((group) => group.getMods()),
       ...this.mods.getValue(),
     ];
+  }
+
+  getAllCombinedValues(): Partial<T> {
+    return this.combinedValues.getValue();
   }
 
   getAllModValues<const K extends keyof T>(modName: K): T[K][] {
@@ -82,7 +67,7 @@ export class ModGroup<T extends Partial<ModsObject>> {
     this.childModGroups.getItems().forEach((group) => group.processRemovedMods(mods));
   }
 
-  removeModsForKey(key: unknown , mods:T): void{
+  removeModsForKey(key: unknown, mods: T): void {
     this.removeMods(mods);
     this.modsByKeysMap.getOr(key)?.remove(mods);
   }
@@ -143,6 +128,5 @@ export class ModGroup<T extends Partial<ModsObject>> {
   private updateMods(): void {
     // keep immutable for now
     this.combinedValues.update((v) => v);
-    // this.combinedValues.update((v) => ({ ...v }));
   }
 }
